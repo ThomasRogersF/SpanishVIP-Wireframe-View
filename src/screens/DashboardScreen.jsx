@@ -1,5 +1,6 @@
-import { useState } from 'react'
 import Box from '@mui/material/Box'
+import useSDKConfig from '../hooks/useSDKConfig.js'
+import { useNavigation } from '../hooks/useNavigation.js'
 
 // Dashboard components
 import HeroCard from '../components/Dashboard/HeroCard.jsx'
@@ -10,108 +11,88 @@ import UpsellBanner from '../components/Dashboard/UpsellBanner.jsx'
 /**
  * DashboardScreen - Main hub of the SpanishVIP app
  * Contains hero card, quick win card, curriculum modules, and upsell banner
- * 
+ *
  * Layout order matches original HTML:
  * 1. Hero Card
  * 2. Quick Win Card
  * 3. Module List (Module 1 + Module 2, without locked Module 3)
  * 4. Upsell Banner
  * 5. Locked Module 3
+ *
+ * Uses useNavigation hook for all navigation - no props required
  */
-function DashboardScreen({ onTabChange, onStartLesson, onShowSpeedDrill }) {
-  // SDK Configuration - will be integrated with actual SDK in later phase
-  // TODO: Connect to SDK configuration system in future phase
-  const defaultConfig = {
-    hero_headline: "Continue Unit 1: Cafe Culture",
-    hero_subheadline: "Lesson 4: Ordering with Politeness",
-    hero_button: "Resume Class",
-    sofia_nudge: "You left off at the Roleplay. Let's finish ordering that coffee.",
-    quick_win_headline: "Short on time?",
-    quick_win_action: "Do a 2-Min Vocab Drill ⚡",
-    upsell_text: "Stuck on a concept?",
-    upsell_action: "Book a Human Tutor ($15)",
-    hero_card_bg: "#14B8A6",
-    hero_card_text: "#FFFFFF",
-    surface_color: "#FFFFFF",
-    text_color: "#111827",
-    primary_action_color: "#FFFFFF"
-  }
+function DashboardScreen() {
+  // Get SDK configuration from context
+  const config = useSDKConfig()
+  
+  // Get navigation functions from context
+  const {
+    showLessonRunner,
+    showSpeedDrill,
+    showVoiceMode,
+    showSerEstarConcept,
+    showVocabDrillIntro,
+    showVIPSurvivalIntro,
+    showVIPAccessOffer,
+    setActiveTab
+  } = useNavigation()
 
-  const [config] = useState(defaultConfig)
-
-  // Navigation Handlers - placeholder implementations
-  // These will connect to actual screens in future phases
+  // Navigation Handlers - using navigation context
 
   /**
    * Resume lesson - navigates to LessonScreen
    */
   const handleResumeLesson = () => {
-    console.log('DashboardScreen: Resume lesson clicked - navigating to LessonScreen')
-    if (onStartLesson) {
-      onStartLesson()
-    }
+    showLessonRunner()
   }
 
   /**
    * Start speed drill - navigates to SpeedDrillScreen
    */
   const handleSpeedDrill = () => {
-    console.log('DashboardScreen: Speed drill clicked - navigating to SpeedDrillScreen')
-    if (onShowSpeedDrill) {
-      onShowSpeedDrill()
-    }
+    showSpeedDrill()
   }
 
   /**
    * Navigate to review screen
    */
   const handleReviewScreen = () => {
-    console.log('DashboardScreen: Review screen clicked')
-    if (onTabChange) {
-      onTabChange(null, 'review')
-    }
+    setActiveTab('review')
   }
 
   /**
    * Navigate to voice mode
    */
   const handleVoiceMode = () => {
-    console.log('DashboardScreen: Voice mode clicked')
-    if (onTabChange) {
-      onTabChange(null, 'voice')
-    }
+    showVoiceMode()
   }
 
   /**
    * Navigate to Ser vs Estar concept lesson (Module 2, L3)
-   * TODO: Connect to SerEstarScreen in later phase
    */
   const handleSerEstarConcept = () => {
-    console.log('DashboardScreen: Ser vs Estar clicked - will connect to SerEstarScreen')
+    showSerEstarConcept()
   }
 
   /**
    * Navigate to Vocab Drill intro (Module 2, L2)
-   * TODO: Connect to VocabDrillScreen in later phase
    */
   const handleVocabDrill = () => {
-    console.log('DashboardScreen: Vocab Drill clicked - will connect to VocabDrillScreen')
+    showVocabDrillIntro()
   }
 
   /**
    * Navigate to VIP Survival phrases intro (Module 1, L4)
-   * TODO: Connect to VIPSurvivalScreen in later phase
    */
   const handleVIPSurvival = () => {
-    console.log('DashboardScreen: VIP Survival clicked - will connect to VIPSurvivalScreen')
+    showVIPSurvivalIntro()
   }
 
   /**
    * Navigate to VIP Access offer screen
-   * TODO: Connect to VIPAccessOfferScreen in later phase
    */
   const handleVIPAccessOffer = () => {
-    console.log('DashboardScreen: VIP Access Offer clicked - will connect to VIPAccessOfferScreen')
+    showVIPAccessOffer()
   }
 
   return (
@@ -142,7 +123,7 @@ function DashboardScreen({ onTabChange, onStartLesson, onShowSpeedDrill }) {
         <QuickWinCard
           headline={config.quick_win_headline}
           actionText={config.quick_win_action}
-          onStartClick={handleSpeedDrill}
+          onStartClick={handleVocabDrill}
         />
       </Box>
 

@@ -4,6 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MicrophoneButton from '../components/Lesson/MicrophoneButton';
 import FeedbackCard from '../components/Lesson/FeedbackCard';
 import { useRecording } from '../hooks/useRecording';
+import { useNavigation } from '../hooks/useNavigation.js';
 import SofiaAvatar from '../components/shared/SofiaAvatar';
 import { iosButtonStyle } from '../components/shared/sharedStyles';
 
@@ -12,18 +13,16 @@ import { iosButtonStyle } from '../components/shared/sharedStyles';
  * Displays lesson content, handles voice recording interactions,
  * and provides feedback on user responses.
  * 
- * @component
- * @param {Object} props - Component props
- * @param {Function} props.onComplete - Callback when lesson is completed
- * @param {Function} props.onBack - Callback to navigate back to dashboard
+ * Uses useNavigation hook for navigation - no props required
  * 
+ * @component
  * @example
- * <LessonScreen
- *   onComplete={() => console.log('Lesson completed')}
- *   onBack={() => setScreen('dashboard')}
- * />
+ * <LessonScreen />
  */
-const LessonScreen = ({ onComplete, onBack }) => {
+const LessonScreen = () => {
+  // Get navigation functions from context
+  const { showSuccess, showDashboard } = useNavigation();
+
   // Lesson state management
   const [lessonProgress, setLessonProgress] = useState(25);
   const [currentStep, setCurrentStep] = useState(1);
@@ -149,10 +148,8 @@ const LessonScreen = ({ onComplete, onBack }) => {
    */
   const handleContinue = () => {
     if (currentStep >= totalSteps) {
-      // Lesson complete
-      if (onComplete) {
-        onComplete();
-      }
+      // Lesson complete - navigate to success screen
+      showSuccess();
     } else {
       // Advance to next step
       setCurrentStep(prev => prev + 1);
@@ -200,7 +197,7 @@ const LessonScreen = ({ onComplete, onBack }) => {
           }}
         >
           <IconButton
-            onClick={onBack}
+            onClick={showDashboard}
             sx={{
               mr: 1,
               color: '#0AA6A6',

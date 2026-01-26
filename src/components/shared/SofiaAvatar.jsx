@@ -3,12 +3,12 @@ import { Box } from '@mui/material'
 
 /**
  * SofiaAvatar Component
- * 
+ *
  * Reusable avatar component for Sofia (AI tutor) with optional gradient border.
- * Supports multiple sizes for different contexts (hero card, lesson screen, etc.).
- * 
+ * Supports multiple sizes for different contexts (hero card, lesson screen, voice mode, etc.).
+ *
  * @param {object} props
- * @param {'small' | 'medium' | 'large'} props.size - Avatar size (default: 'medium')
+ * @param {'small' | 'medium' | 'large' | 'xlarge'} props.size - Avatar size (default: 'medium')
  * @param {string} props.emoji - Emoji to display (default: '👩‍🏫')
  * @param {boolean} props.showGradientBorder - Whether to show gradient border (default: true)
  */
@@ -17,14 +17,16 @@ const SofiaAvatar = ({ size = 'medium', emoji = '👩‍🏫', showGradientBorde
   const sizeMap = {
     small: 48,
     medium: 96,
-    large: 128
+    large: 128,
+    xlarge: 256
   }
 
   // Font size mapping for emoji
   const fontSizeMap = {
     small: '1.5rem',
     medium: '3rem',
-    large: '4rem'
+    large: '4rem',
+    xlarge: '8rem'
   }
 
   const avatarSize = sizeMap[size] || sizeMap.medium

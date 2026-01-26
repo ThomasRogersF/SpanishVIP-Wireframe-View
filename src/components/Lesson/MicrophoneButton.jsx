@@ -1,28 +1,18 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Box, Fab } from '@mui/material';
-import { keyframes } from '@mui/system';
 import MicIcon from '@mui/icons-material/Mic';
 import { touchOptimized } from '../shared/sharedStyles';
-
-/**
- * Pulse ring animation for the microphone button.
- * Migrated from src/style.css pulse-ring animation (lines 48-62).
- * Creates a ripple effect that expands outward and fades.
- */
-const pulseRing = keyframes`
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.4);
-    opacity: 0;
-  }
-`;
+import { pulseRing } from '../shared/sharedAnimations';
 
 /**
  * Interactive microphone button with hold-to-speak functionality.
  * Features animated pulse rings when recording is active.
+ * 
+ * Touch-optimized with:
+ * - Minimum 48x48px touch target (80x80px actual)
+ * - touchAction: 'none' to prevent scroll during hold
+ * - Haptic feedback simulation (visual pulse)
+ * - No tap highlight on iOS
  * 
  * @component
  * @param {Object} props - Component props
@@ -46,6 +36,9 @@ const MicrophoneButton = ({
 }) => {
   // Staggered animation delays for pulse rings
   const pulseDelays = ['0s', '0.7s', '1.4s'];
+  
+  // Ref to track if touch is active (prevents duplicate events)
+  const isTouchActive = useRef(false);
 
   /**
    * Common styles for pulse ring elements
@@ -62,6 +55,54 @@ const MicrophoneButton = ({
     pointerEvents: 'none',
   };
 
+  /**
+   * Handle touch start - prevents scroll during hold
+   */
+  const handleTouchStart = useCallback((e) => {
+    e.preventDefault(); // Prevent scroll during hold
+    isTouchActive.current = true;
+    onPressStart?.(e);
+  }, [onPressStart]);
+
+  /**
+   * Handle touch end
+   */
+  const handleTouchEnd = useCallback((e) => {
+    e.preventDefault();
+    if (isTouchActive.current) {
+      isTouchActive.current = false;
+      onPressEnd?.(e);
+    }
+  }, [onPressEnd]);
+
+  /**
+   * Handle touch cancel (e.g., when user scrolls away)
+   */
+  const handleTouchCancel = useCallback((e) => {
+    if (isTouchActive.current) {
+      isTouchActive.current = false;
+      onPressEnd?.(e);
+    }
+  }, [onPressEnd]);
+
+  /**
+   * Handle mouse down - only if not touch device
+   */
+  const handleMouseDown = useCallback((e) => {
+    if (!isTouchActive.current) {
+      onPressStart?.(e);
+    }
+  }, [onPressStart]);
+
+  /**
+   * Handle mouse up - only if not touch device
+   */
+  const handleMouseUp = useCallback((e) => {
+    if (!isTouchActive.current) {
+      onPressEnd?.(e);
+    }
+  }, [onPressEnd]);
+
   return (
     <Box
       sx={{
@@ -71,6 +112,11 @@ const MicrophoneButton = ({
         justifyContent: 'center',
         width: '120px',
         height: '120px',
+        // Prevent any touch behavior on container
+        touchAction: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
       }}
     >
       {/* Animated pulse rings - only visible when recording */}
@@ -89,27 +135,43 @@ const MicrophoneButton = ({
       <Fab
         size="large"
         disabled={disabled}
-        onMouseDown={onPressStart}
-        onMouseUp={onPressEnd}
-        onMouseLeave={onPressEnd}
-        onTouchStart={onPressStart}
-        onTouchEnd={onPressEnd}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
         sx={{
           ...touchOptimized,
           width: '80px',
           height: '80px',
+          minWidth: '48px', // WCAG minimum touch target
+          minHeight: '48px', // WCAG minimum touch target
           backgroundColor: isRecording ? '#EF4444' : '#0AA6A6',
           color: '#FFFFFF',
-          transition: 'background-color 0.3s ease, transform 0.2s ease',
+          transition: 'background-color 0.3s ease, transform 0.15s ease',
+          // Prevent scroll during hold
+          touchAction: 'none',
+          // Remove iOS tap highlight
+          WebkitTapHighlightColor: 'transparent',
+          // Prevent text selection
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
+          // Disable ripple on touch for cleaner feedback
           '&:hover': {
             backgroundColor: isRecording ? '#DC2626' : '#099494',
           },
           '&:active': {
-            transform: 'scale(0.95)',
+            transform: 'scale(0.92)',
           },
           '&.Mui-disabled': {
             backgroundColor: '#9CA3AF',
             color: '#FFFFFF',
+          },
+          // Focus visible for accessibility
+          '&:focus-visible': {
+            outline: '3px solid #0AA6A6',
+            outlineOffset: '2px',
           },
         }}
         aria-label={isRecording ? 'Recording in progress' : 'Hold to speak'}

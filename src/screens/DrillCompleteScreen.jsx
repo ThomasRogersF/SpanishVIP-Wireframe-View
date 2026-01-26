@@ -4,21 +4,24 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SofiaAvatar from '../components/shared/SofiaAvatar';
 import StatCard from '../components/shared/StatCard';
+import { useNavigation } from '../hooks/useNavigation.js';
 import { iosButtonStyle } from '../components/shared/sharedStyles';
 
 /**
  * DrillCompleteScreen Component
  * 
  * Quick drill completion summary with stats and feedback.
+ * Uses useNavigation hook for navigation - no props required
  * 
  * @param {Object} props
- * @param {Function} props.onBackToHome - Handler to return to dashboard
  * @param {Object} props.stats - Object with xp, wordsCount, timeSpent
  */
 const DrillCompleteScreen = ({
-  onBackToHome,
   stats = { xp: 5, wordsCount: 5, timeSpent: '1:45' },
 }) => {
+  // Get navigation functions from context
+  const { showDashboard } = useNavigation();
+
   return (
     <Box
       sx={{
@@ -171,7 +174,7 @@ const DrillCompleteScreen = ({
           <Button
             variant="contained"
             fullWidth
-            onClick={onBackToHome}
+            onClick={showDashboard}
             sx={{
               ...iosButtonStyle,
               background: 'linear-gradient(135deg, #0D9488 0%, #0AA6A6 100%)',

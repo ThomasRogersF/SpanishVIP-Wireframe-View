@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, IconButton, Card } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -6,39 +6,73 @@ import SofiaAvatar from '../components/shared/SofiaAvatar';
 import MicrophoneButton from '../components/Lesson/MicrophoneButton';
 import useRecording from '../hooks/useRecording';
 import useTimer from '../hooks/useTimer';
+import { useNavigation } from '../hooks/useNavigation.js';
 import { iosButtonStyle } from '../components/shared/sharedStyles';
 
 /**
  * SpeedDrillScreen Component
- * 
+ *
  * Timed vocabulary drill interface with countdown timer and flashcards.
- * 
+ * Uses useNavigation hook for navigation - no props required
+ *
  * @param {Object} props
- * @param {Function} props.onComplete - Handler to show DrillCompleteScreen
- * @param {Function} props.onClose - Handler to return to dashboard
  * @param {Object} props.flashcardData - Object with emoji, englishText, spanishText
  */
 const SpeedDrillScreen = ({
-  onComplete,
-  onClose,
   flashcardData = {
     emoji: '🍎',
     englishText: 'The Apple',
     spanishText: 'La manzana',
   },
 }) => {
+  // Get navigation functions from context
+  const { showDrillComplete, showDashboard } = useNavigation();
+
   const { isRecording, startRecording, stopRecording } = useRecording();
-  const { formattedTime, start, stop } = useTimer(119);
+  const { formattedTime, timeRemaining, start, stop } = useTimer(119);
   const [showResponse, setShowResponse] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isTimedOut, setIsTimedOut] = useState(false);
 
-  // Start timer on mount
+  // Refs for timeout cleanup and unmount guard
+  const processingTimeoutRef = useRef(null);
+  const autoAdvanceTimeoutRef = useRef(null);
+  const isActiveRef = useRef(true);
+
+  // Helper to clear all timeouts
+  const clearAllTimeouts = () => {
+    if (processingTimeoutRef.current) {
+      clearTimeout(processingTimeoutRef.current);
+      processingTimeoutRef.current = null;
+    }
+    if (autoAdvanceTimeoutRef.current) {
+      clearTimeout(autoAdvanceTimeoutRef.current);
+      autoAdvanceTimeoutRef.current = null;
+    }
+  };
+
+  // Start timer on mount, cleanup on unmount
   useEffect(() => {
+    isActiveRef.current = true;
     start();
     return () => {
+      isActiveRef.current = false;
+      clearAllTimeouts();
       stop();
     };
   }, [start, stop]);
+
+  // Handle countdown reaching 0 - end the drill
+  useEffect(() => {
+    if (timeRemaining === 0 && !isTimedOut) {
+      stop();
+      setIsTimedOut(true);
+      // Auto-complete the drill when time runs out
+      if (isActiveRef.current) {
+        showDrillComplete();
+      }
+    }
+  }, [timeRemaining, isTimedOut, stop, showDrillComplete]);
 
   // Handle recording end - show response and auto-advance
   const handlePressEnd = () => {
@@ -46,20 +80,30 @@ const SpeedDrillScreen = ({
     if (isRecording) {
       setIsProcessing(true);
       // Simulate processing delay
-      setTimeout(() => {
+      processingTimeoutRef.current = setTimeout(() => {
+        if (!isActiveRef.current) return;
         setIsProcessing(false);
         setShowResponse(true);
         // Auto-advance to DrillComplete after showing response
-        setTimeout(() => {
+        autoAdvanceTimeoutRef.current = setTimeout(() => {
+          if (!isActiveRef.current) return;
           stop();
-          onComplete();
+          showDrillComplete();
         }, 1500);
       }, 500);
     }
   };
 
+  // Handle close - clear timeouts before closing
+  const handleClose = () => {
+    clearAllTimeouts();
+    stop();
+    showDashboard();
+  };
+
   // Get helper text based on current state
   const getHelperText = () => {
+    if (isTimedOut) return 'Time\'s up!';
     if (isProcessing) return 'Processing...';
     if (isRecording) return 'Recording...';
     return 'Hold to speak';
@@ -88,10 +132,7 @@ const SpeedDrillScreen = ({
       >
         {/* Close Button */}
         <IconButton
-          onClick={() => {
-            stop();
-            onClose();
-          }}
+          onClick={handleClose}
           sx={{
             ...iosButtonStyle,
             width: 40,
@@ -268,7 +309,7 @@ const SpeedDrillScreen = ({
           isRecording={isRecording}
           onPressStart={startRecording}
           onPressEnd={handlePressEnd}
-          disabled={isProcessing || showResponse}
+          disabled={isProcessing || showResponse || isTimedOut}
         />
       </Box>
     </Box>

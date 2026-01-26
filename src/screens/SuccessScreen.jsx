@@ -4,23 +4,26 @@ import CheckIcon from '@mui/icons-material/Check';
 import BoltIcon from '@mui/icons-material/Bolt';
 import SofiaAvatar from '../components/shared/SofiaAvatar';
 import StatCard from '../components/shared/StatCard';
+import { useNavigation } from '../hooks/useNavigation.js';
 import { iosButtonStyle } from '../components/shared/sharedStyles';
 
 /**
  * SuccessScreen Component
  * 
  * Displays lesson completion celebration with stats and feedback.
+ * Uses useNavigation hook for navigation - no props required
  * 
  * @param {Object} props
- * @param {Function} props.onContinue - Handler to return to dashboard
  * @param {Object} props.stats - Object with accuracy, xp, streakDays
  * @param {string} props.message - Sofia's feedback message
  */
 const SuccessScreen = ({
-  onContinue,
   stats = { accuracy: 100, xp: 10, streakDays: 1 },
   message = "¡Increíble! You sound like a local."
 }) => {
+  // Get navigation functions from context
+  const { showDashboard } = useNavigation();
+
   return (
     <Box
       sx={{
@@ -183,7 +186,7 @@ const SuccessScreen = ({
           <Button
             variant="contained"
             fullWidth
-            onClick={onContinue}
+            onClick={showDashboard}
             sx={{
               ...iosButtonStyle,
               background: 'linear-gradient(135deg, #0D9488 0%, #0AA6A6 100%)',

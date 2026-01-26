@@ -6,7 +6,7 @@ import { iosButtonStyle } from '../shared/sharedStyles';
  * Component to display AI feedback after user voice responses.
  * Shows feedback type (success/error/info), message, optional suggestions,
  * and action buttons for retrying or continuing.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {'success' | 'error' | 'info'} props.feedbackType - Type of feedback to display
@@ -14,14 +14,15 @@ import { iosButtonStyle } from '../shared/sharedStyles';
  * @param {string} [props.suggestion] - Optional suggestion text for improvement
  * @param {Function} [props.onTryAgain] - Callback for "Try Again" button click
  * @param {Function} [props.onContinue] - Callback for "Continue" button click
- * 
+ * @param {string} [props.continueLabel='Continue'] - Custom label for the continue button
+ *
  * @example
  * <FeedbackCard
  *   feedbackType="success"
  *   message="Great pronunciation! You nailed the polite form."
  *   onContinue={handleContinue}
  * />
- * 
+ *
  * @example
  * <FeedbackCard
  *   feedbackType="error"
@@ -29,14 +30,16 @@ import { iosButtonStyle } from '../shared/sharedStyles';
  *   suggestion="Try emphasizing 'por favor' more."
  *   onTryAgain={handleTryAgain}
  *   onContinue={handleContinue}
+ *   continueLabel="Next Prompt"
  * />
  */
-const FeedbackCard = ({ 
-  feedbackType, 
-  message, 
-  suggestion, 
-  onTryAgain, 
-  onContinue 
+const FeedbackCard = ({
+  feedbackType,
+  message,
+  suggestion,
+  onTryAgain,
+  onContinue,
+  continueLabel = 'Continue'
 }) => {
   /**
    * Maps feedbackType to MUI Alert severity
@@ -135,7 +138,7 @@ const FeedbackCard = ({
                 },
               }}
             >
-              Continue
+              {continueLabel}
             </Button>
           )}
         </Box>

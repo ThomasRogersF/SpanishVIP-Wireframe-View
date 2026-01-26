@@ -1,45 +1,49 @@
-import { useState } from 'react'
+import { useMemo, lazy, Suspense, useEffect } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import theme from './theme/muiTheme.js'
+import { SDKProvider } from './context/SDKContext.jsx'
+import { NavigationProvider } from './context/NavigationContext.jsx'
+import { useNavigation, SCREENS } from './hooks/useNavigation.js'
+import useSDKConfig from './hooks/useSDKConfig.js'
+import { createMuiTheme } from './theme/muiTheme.js'
 
-// Shared components
+// Shared components (loaded immediately - small bundle impact)
 import MobileFrame from './components/shared/MobileFrame.jsx'
 import StatusBar from './components/shared/StatusBar.jsx'
 import BottomNav from './components/shared/BottomNav.jsx'
 import SofiaAvatar from './components/shared/SofiaAvatar.jsx'
+import LoadingScreen from './components/shared/LoadingScreen.jsx'
+import ErrorBoundary from './components/shared/ErrorBoundary.jsx'
 
-// Screen components
-import DashboardScreen from './screens/DashboardScreen.jsx'
-import LessonScreen from './screens/LessonScreen.jsx'
-import SuccessScreen from './screens/SuccessScreen.jsx'
-import SpeedDrillScreen from './screens/SpeedDrillScreen.jsx'
-import DrillCompleteScreen from './screens/DrillCompleteScreen.jsx'
-
-function ReviewScreen() {
-  return (
-    <Box sx={{ p: 3, textAlign: 'center' }}>
-      <Typography variant="h6" color="primary">Review</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        Practice vocabulary and grammar
-      </Typography>
-    </Box>
-  )
-}
-
-function VoiceScreen() {
-  return (
-    <Box sx={{ p: 3, textAlign: 'center' }}>
-      <SofiaAvatar size="medium" />
-      <Typography variant="h6" color="primary" sx={{ mt: 2 }}>Voice Mode</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        Practice speaking with Sofia
-      </Typography>
-    </Box>
-  )
-}
+// Lazy-loaded screen components (loaded on demand)
+const DashboardScreen = lazy(() => import('./screens/DashboardScreen.jsx'))
+const LessonScreen = lazy(() => import('./screens/LessonScreen.jsx'))
+const SuccessScreen = lazy(() => import('./screens/SuccessScreen.jsx'))
+const SpeedDrillScreen = lazy(() => import('./screens/SpeedDrillScreen.jsx'))
+const DrillCompleteScreen = lazy(() => import('./screens/DrillCompleteScreen.jsx'))
+const ActiveCallScreen = lazy(() => import('./screens/ActiveCallScreen.jsx'))
+const VoiceModeScreen = lazy(() => import('./screens/VoiceModeScreen.jsx'))
+const ReviewScreen = lazy(() => import('./screens/ReviewScreen.jsx'))
+const SerEstarConceptScreen = lazy(() => import('./screens/SerEstarConceptScreen.jsx'))
+const SerEstarLogicScreen = lazy(() => import('./screens/SerEstarLogicScreen.jsx'))
+const SerEstarSpeakingScreen = lazy(() => import('./screens/SerEstarSpeakingScreen.jsx'))
+const VocabDrillIntroScreen = lazy(() => import('./screens/VocabDrillIntroScreen.jsx'))
+const VocabTeachCardScreen = lazy(() => import('./screens/VocabTeachCardScreen.jsx'))
+const VocabSpeakingScreen = lazy(() => import('./screens/VocabSpeakingScreen.jsx'))
+const VocabListeningScreen = lazy(() => import('./screens/VocabListeningScreen.jsx'))
+const VocabSuccessScreen = lazy(() => import('./screens/VocabSuccessScreen.jsx'))
+const VIPSurvivalIntroScreen = lazy(() => import('./screens/VIPSurvivalIntroScreen.jsx'))
+const VIPTeachShieldScreen = lazy(() => import('./screens/VIPTeachShieldScreen.jsx'))
+const VIPTeachBrakeScreen = lazy(() => import('./screens/VIPTeachBrakeScreen.jsx'))
+const VIPTeachToolScreen = lazy(() => import('./screens/VIPTeachToolScreen.jsx'))
+const VIPLogicCheckScreen = lazy(() => import('./screens/VIPLogicCheckScreen.jsx'))
+const VIPSpeakingDrillScreen = lazy(() => import('./screens/VIPSpeakingDrillScreen.jsx'))
+const VIPScenarioSetupScreen = lazy(() => import('./screens/VIPScenarioSetupScreen.jsx'))
+const VIPRoleplayScreen = lazy(() => import('./screens/VIPRoleplayScreen.jsx'))
+const VIPSuccessScreen = lazy(() => import('./screens/VIPSuccessScreen.jsx'))
+const VIPAccessOfferScreen = lazy(() => import('./screens/VIPAccessOfferScreen.jsx'))
 
 function ProfileScreen() {
   return (
@@ -65,163 +69,169 @@ function SettingsScreen() {
   )
 }
 
-// Main app layout with mobile frame and navigation
-function AppLayout() {
-  const [activeTab, setActiveTab] = useState('home')
-  const [currentScreen, setCurrentScreen] = useState('dashboard')
+/**
+ * ThemedApp - Wraps the app with dynamic theme based on SDK config
+ * Uses useSDKConfig hook to get current config and creates theme dynamically
+ */
+function ThemedApp() {
+  const config = useSDKConfig()
+  const dynamicTheme = useMemo(() => createMuiTheme(config), [config])
 
+  return (
+    <ThemeProvider theme={dynamicTheme}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AppLayout />} />
+          <Route path="*" element={<AppLayout />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+  )
+}
+
+/**
+ * Main app layout with mobile frame and navigation
+ * Uses NavigationContext for all navigation state and transitions
+ */
+function AppLayout() {
+  const { currentScreen, activeTab, setActiveTab, isFullScreen, isTransitioning, isLoading, endLoading } = useNavigation()
+
+  /**
+   * End loading state after screen transitions complete
+   * This ensures the loading overlay is hidden once lazy content resolves
+   */
+  useEffect(() => {
+    // End loading when the screen has loaded (currentScreen changes and transition ends)
+    if (!isTransitioning) {
+      endLoading()
+    }
+  }, [currentScreen, isTransitioning, endLoading])
+
+  /**
+   * Handle bottom nav tab changes
+   */
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue)
-    setCurrentScreen('dashboard') // Reset to dashboard when changing tabs
   }
 
   /**
-   * Handler for when a lesson is completed - shows SuccessScreen
+   * Render the active screen based on current navigation state
+   * All screens use useNavigation hook internally for their navigation needs
    */
-  const handleLessonComplete = () => {
-    console.log('[App] Lesson completed - showing SuccessScreen')
-    setCurrentScreen('success')
-  }
-
-  /**
-   * Handler for navigating back to dashboard from lesson
-   */
-  const handleBackToDashboard = () => {
-    setCurrentScreen('dashboard')
-  }
-
-  /**
-   * Handler for starting a lesson from dashboard
-   */
-  const handleStartLesson = () => {
-    setCurrentScreen('lesson')
-  }
-
-  /**
-   * Handler for showing SuccessScreen
-   */
-  const handleShowSuccess = () => {
-    setCurrentScreen('success')
-  }
-
-  /**
-   * Handler for showing SpeedDrillScreen
-   */
-  const handleShowSpeedDrill = () => {
-    setCurrentScreen('speedDrill')
-  }
-
-  /**
-   * Handler for showing DrillCompleteScreen
-   */
-  const handleShowDrillComplete = () => {
-    setCurrentScreen('drillComplete')
-  }
-
-  /**
-   * Handler for continuing from success screen to dashboard
-   */
-  const handleSuccessContinue = () => {
-    console.log('[App] Success continue - returning to dashboard')
-    setCurrentScreen('dashboard')
-  }
-
-  /**
-   * Handler for closing speed drill and returning to dashboard
-   */
-  const handleDrillClose = () => {
-    console.log('[App] Drill closed - returning to dashboard')
-    setCurrentScreen('dashboard')
-  }
-
-  /**
-   * Handler for completing speed drill - shows DrillCompleteScreen
-   */
-  const handleDrillComplete = () => {
-    console.log('[App] Drill completed - showing DrillCompleteScreen')
-    setCurrentScreen('drillComplete')
-  }
-
-  // Check if we're on a full-screen mode (no StatusBar/BottomNav)
-  const isFullScreen = ['lesson', 'success', 'speedDrill', 'drillComplete'].includes(currentScreen)
-
-  // Render the active screen based on selected tab and current screen
   const renderScreen = () => {
-    // Handle full-screen modes first
+    // Handle screen-based navigation
     switch (currentScreen) {
-      case 'lesson':
-        return (
-          <LessonScreen
-            onComplete={handleLessonComplete}
-            onBack={handleBackToDashboard}
-          />
-        )
-      case 'success':
-        return (
-          <SuccessScreen
-            onContinue={handleSuccessContinue}
-          />
-        )
-      case 'speedDrill':
-        return (
-          <SpeedDrillScreen
-            onComplete={handleDrillComplete}
-            onClose={handleDrillClose}
-          />
-        )
-      case 'drillComplete':
-        return (
-          <DrillCompleteScreen
-            onBackToHome={handleBackToDashboard}
-          />
-        )
-    }
-
-    // Handle tab-based navigation
-    switch (activeTab) {
-      case 'home':
-        return (
-          <DashboardScreen
-            onTabChange={handleTabChange}
-            onStartLesson={handleStartLesson}
-            onShowSpeedDrill={handleShowSpeedDrill}
-          />
-        )
-      case 'review':
+      case SCREENS.LESSON:
+        return <LessonScreen />
+      case SCREENS.SUCCESS:
+        return <SuccessScreen />
+      case SCREENS.SPEED_DRILL:
+        return <SpeedDrillScreen />
+      case SCREENS.DRILL_COMPLETE:
+        return <DrillCompleteScreen />
+      case SCREENS.VOICE_MODE:
+        return <VoiceModeScreen />
+      case SCREENS.ACTIVE_CALL:
+        return <ActiveCallScreen />
+      case SCREENS.REVIEW:
         return <ReviewScreen />
-      case 'voice':
-        return <VoiceScreen />
-      case 'profile':
-        return <ProfileScreen />
-      case 'settings':
-        return <SettingsScreen />
+      case SCREENS.SER_ESTAR_CONCEPT:
+        return <SerEstarConceptScreen />
+      case SCREENS.SER_ESTAR_LOGIC:
+        return <SerEstarLogicScreen />
+      case SCREENS.SER_ESTAR_SPEAKING:
+        return <SerEstarSpeakingScreen />
+      case SCREENS.VOCAB_DRILL_INTRO:
+        return <VocabDrillIntroScreen />
+      case SCREENS.VOCAB_TEACH_CARD:
+        return <VocabTeachCardScreen />
+      case SCREENS.VOCAB_SPEAKING:
+        return <VocabSpeakingScreen />
+      case SCREENS.VOCAB_LISTENING:
+        return <VocabListeningScreen />
+      case SCREENS.VOCAB_SUCCESS:
+        return <VocabSuccessScreen />
+      case SCREENS.VIP_SURVIVAL_INTRO:
+        return <VIPSurvivalIntroScreen />
+      case SCREENS.VIP_TEACH_SHIELD:
+        return <VIPTeachShieldScreen />
+      case SCREENS.VIP_TEACH_BRAKE:
+        return <VIPTeachBrakeScreen />
+      case SCREENS.VIP_TEACH_TOOL:
+        return <VIPTeachToolScreen />
+      case SCREENS.VIP_LOGIC_CHECK:
+        return <VIPLogicCheckScreen />
+      case SCREENS.VIP_SPEAKING_DRILL:
+        return <VIPSpeakingDrillScreen />
+      case SCREENS.VIP_SCENARIO_SETUP:
+        return <VIPScenarioSetupScreen />
+      case SCREENS.VIP_ROLEPLAY:
+        return <VIPRoleplayScreen />
+      case SCREENS.VIP_SUCCESS:
+        return <VIPSuccessScreen />
+      case SCREENS.VIP_ACCESS_OFFER:
+        return <VIPAccessOfferScreen />
+      case SCREENS.DASHBOARD:
       default:
-        return (
-          <DashboardScreen
-            onTabChange={handleTabChange}
-            onStartLesson={handleStartLesson}
-            onShowSpeedDrill={handleShowSpeedDrill}
-          />
-        )
+        // Handle tab-based navigation for dashboard
+        switch (activeTab) {
+          case 'home':
+            return <DashboardScreen />
+          case 'review':
+            return <ReviewScreen />
+          case 'voice':
+            return <VoiceModeScreen />
+          case 'profile':
+            return <ProfileScreen />
+          case 'settings':
+            return <SettingsScreen />
+          default:
+            return <DashboardScreen />
+        }
     }
   }
+
+  const fullScreen = isFullScreen(currentScreen)
 
   return (
     <MobileFrame>
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
+        {/* Loading overlay for navigation transitions */}
+        {isLoading && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 9999,
+              backgroundColor: 'background.default'
+            }}
+          >
+            <LoadingScreen />
+          </Box>
+        )}
         {/* Hide StatusBar when on full-screen modes */}
-        {!isFullScreen && <StatusBar streakDays={3} voiceEnergyMinutes="12m" />}
+        {!fullScreen && <StatusBar streakDays={3} voiceEnergyMinutes="12m" />}
         <Box
           sx={{
             flex: 1,
             overflow: 'auto',
-            pb: isFullScreen ? 0 : 10
+            pb: fullScreen ? 0 : 10,
+            opacity: isTransitioning ? 0 : 1,
+            transform: isTransitioning ? 'translateY(8px)' : 'translateY(0)',
+            transition: 'opacity 50ms ease-out, transform 50ms ease-out'
           }}
         >
-          {renderScreen()}
+          <ErrorBoundary>
+            <Suspense fallback={<LoadingScreen />}>
+              {renderScreen()}
+            </Suspense>
+          </ErrorBoundary>
         </Box>
         {/* Hide BottomNav when on full-screen modes */}
-        {!isFullScreen && <BottomNav value={activeTab} onChange={handleTabChange} />}
+        {!fullScreen && <BottomNav value={activeTab} onChange={handleTabChange} />}
       </Box>
     </MobileFrame>
   )
@@ -229,13 +239,13 @@ function AppLayout() {
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<AppLayout />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <SDKProvider>
+      <NavigationProvider>
+        <ErrorBoundary>
+          <ThemedApp />
+        </ErrorBoundary>
+      </NavigationProvider>
+    </SDKProvider>
   )
 }
 
