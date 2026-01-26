@@ -1,4 +1,4 @@
-import { useMemo, lazy, Suspense, useEffect } from 'react'
+import { useMemo, lazy, Suspense, useEffect, useState } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Box from '@mui/material/Box'
@@ -16,6 +16,21 @@ import BottomNav from './components/shared/BottomNav.jsx'
 import SofiaAvatar from './components/shared/SofiaAvatar.jsx'
 import LoadingScreen from './components/shared/LoadingScreen.jsx'
 import ErrorBoundary from './components/shared/ErrorBoundary.jsx'
+
+// Profile components
+import ProfileHeader from './components/Profile/ProfileHeader.jsx'
+import StatisticsSection from './components/Profile/StatisticsSection.jsx'
+import AchievementsSection from './components/Profile/AchievementsSection.jsx'
+
+// Settings components
+import SettingsSection from './components/Settings/SettingsSection.jsx'
+import SettingsToggle from './components/Settings/SettingsToggle.jsx'
+import SettingsInput from './components/Settings/SettingsInput.jsx'
+import SettingsSelect from './components/Settings/SettingsSelect.jsx'
+import SettingsButton from './components/Settings/SettingsButton.jsx'
+
+// Mock data
+import mockUserData from './data/mockUserData.js'
 
 // Lazy-loaded screen components (loaded on demand)
 const DashboardScreen = lazy(() => import('./screens/DashboardScreen.jsx'))
@@ -46,25 +61,167 @@ const VIPSuccessScreen = lazy(() => import('./screens/VIPSuccessScreen.jsx'))
 const VIPAccessOfferScreen = lazy(() => import('./screens/VIPAccessOfferScreen.jsx'))
 
 function ProfileScreen() {
+  // Initialize state from mock data for future state management
+  const [profileData, setProfileData] = useState(mockUserData.userProfile)
+  const [statistics, setStatistics] = useState(mockUserData.statistics)
+  const [achievements, setAchievements] = useState(mockUserData.achievements)
+
+  const handleViewAllAchievements = () => {
+    console.log('View all achievements clicked')
+  }
+
   return (
-    <Box sx={{ p: 3, textAlign: 'center' }}>
-      <SofiaAvatar size="small" emoji="👤" showGradientBorder={false} />
-      <Typography variant="h6" color="primary" sx={{ mt: 2 }}>Profile</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        Your learning progress
-      </Typography>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+      <Box sx={{ px: 2.5, py: 3, pb: 12, flex: 1, overflow: 'auto' }}>
+        <ProfileHeader
+          name={profileData.name}
+          username={profileData.username}
+          joinDate={profileData.joinDate}
+          friendCount={profileData.friendCount}
+          avatarEmoji={profileData.avatarEmoji}
+        />
+        
+        <Box sx={{ mt: 3 }}>
+          <StatisticsSection
+            streak={statistics.streak}
+            totalXP={statistics.totalXP}
+            currentLeague={statistics.currentLeague}
+            topFinishes={statistics.topFinishes}
+          />
+        </Box>
+        
+        <Box sx={{ mt: 3 }}>
+          <AchievementsSection
+            achievements={achievements}
+            onViewAllClick={handleViewAllAchievements}
+          />
+        </Box>
+      </Box>
     </Box>
   )
 }
 
 function SettingsScreen() {
+  // Initialize state with mock data from centralized data file
+  const [accountData, setAccountData] = useState(mockUserData.accountSettings)
+
+  // Initialize preferences state with mock data
+  const [preferences, setPreferences] = useState(mockUserData.preferences)
+
+  // Get dark mode options from mock data
+  const darkModeOptions = mockUserData.darkModeOptions
+
+  // Handlers for account inputs
+  const handleAccountChange = (field) => (event) => {
+    setAccountData(prev => ({
+      ...prev,
+      [field]: event.target.value
+    }))
+  }
+
+  // Handlers for preferences
+  const handleToggleChange = (field) => (event) => {
+    setPreferences(prev => ({
+      ...prev,
+      [field]: event.target.checked
+    }))
+  }
+
+  const handleDarkModeChange = (event) => {
+    setPreferences(prev => ({
+      ...prev,
+      darkMode: event.target.value
+    }))
+  }
+
+  // Action handlers
+  const handleLogout = () => {
+    console.log('Logout clicked')
+  }
+
+  const handleExportData = () => {
+    console.log('Export data clicked')
+  }
+
+  const handleDeleteAccount = () => {
+    console.log('Delete account clicked')
+  }
+
   return (
-    <Box sx={{ p: 3, textAlign: 'center' }}>
-      <SofiaAvatar size="small" emoji="⚙️" showGradientBorder={false} />
-      <Typography variant="h6" color="primary" sx={{ mt: 2 }}>Settings</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        App preferences and configuration
-      </Typography>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+      <Box sx={{ px: 2.5, py: 3, pb: 12, flex: 1, overflow: 'auto' }}>
+        {/* Account Section */}
+        <SettingsSection title="Account">
+          <SettingsInput
+            label="Name"
+            value={accountData.name}
+            onChange={handleAccountChange('name')}
+            placeholder="Enter your name"
+          />
+          <SettingsInput
+            label="Username"
+            value={accountData.username}
+            onChange={handleAccountChange('username')}
+            placeholder="Enter your username"
+          />
+          <SettingsInput
+            label="Email"
+            value={accountData.email}
+            onChange={handleAccountChange('email')}
+            type="email"
+            placeholder="Enter your email"
+          />
+        </SettingsSection>
+
+        {/* Preferences Section */}
+        <SettingsSection title="Preferences">
+          <SettingsToggle
+            label="Sound effects"
+            description="Play sounds during lessons"
+            checked={preferences.soundEffects}
+            onChange={handleToggleChange('soundEffects')}
+          />
+          <SettingsToggle
+            label="Animations"
+            description="Enable visual animations"
+            checked={preferences.animations}
+            onChange={handleToggleChange('animations')}
+          />
+          <SettingsToggle
+            label="Motivational messages"
+            description="Show encouraging messages"
+            checked={preferences.motivationalMessages}
+            onChange={handleToggleChange('motivationalMessages')}
+          />
+          <SettingsSelect
+            label="Dark mode"
+            value={preferences.darkMode}
+            onChange={handleDarkModeChange}
+            options={darkModeOptions}
+          />
+        </SettingsSection>
+
+        {/* Actions Section */}
+        <SettingsSection title="Actions">
+          <Box sx={{ px: 2.5, py: 2 }}>
+            <SettingsButton
+              label="Logout"
+              onClick={handleLogout}
+              variant="outlined"
+            />
+            <SettingsButton
+              label="Export my data"
+              onClick={handleExportData}
+              variant="outlined"
+            />
+            <SettingsButton
+              label="Delete account"
+              onClick={handleDeleteAccount}
+              destructive
+            />
+          </Box>
+        </SettingsSection>
+      </Box>
     </Box>
   )
 }
