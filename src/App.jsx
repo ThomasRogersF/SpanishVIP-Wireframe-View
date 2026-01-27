@@ -59,6 +59,17 @@ const VIPScenarioSetupScreen = lazy(() => import('./screens/VIPScenarioSetupScre
 const VIPRoleplayScreen = lazy(() => import('./screens/VIPRoleplayScreen.jsx'))
 const VIPSuccessScreen = lazy(() => import('./screens/VIPSuccessScreen.jsx'))
 const VIPAccessOfferScreen = lazy(() => import('./screens/VIPAccessOfferScreen.jsx'))
+const TravelImageSelectScreen = lazy(() => import('./screens/TravelImageSelectScreen.jsx'))
+const TravelTapPairScreen = lazy(() => import('./screens/TravelTapPairScreen.jsx'))
+const TravelTranslationScreen = lazy(() => import('./screens/TravelTranslationScreen.jsx'))
+const TravelTrueFalseScreen = lazy(() => import('./screens/TravelTrueFalseScreen.jsx'))
+const TravelSentenceBuilderScreen = lazy(() => import('./screens/TravelSentenceBuilderScreen.jsx'))
+const TravelFillBlankScreen = lazy(() => import('./screens/TravelFillBlankScreen.jsx'))
+const TravelAudioTranscriptionScreen = lazy(() => import('./screens/TravelAudioTranscriptionScreen.jsx'))
+const TravelSpeakingDrillScreen = lazy(() => import('./screens/TravelSpeakingDrillScreen.jsx'))
+const TravelAudioDiscriminationScreen = lazy(() => import('./screens/TravelAudioDiscriminationScreen.jsx'))
+const TravelRoleplayScreen = lazy(() => import('./screens/TravelRoleplayScreen.jsx'))
+const TravelSuccessScreen = lazy(() => import('./screens/TravelSuccessScreen.jsx'))
 
 function ProfileScreen() {
   // Initialize state from mock data for future state management
@@ -328,6 +339,28 @@ function AppLayout() {
         return <VIPSuccessScreen />
       case SCREENS.VIP_ACCESS_OFFER:
         return <VIPAccessOfferScreen />
+      case SCREENS.TRAVEL_IMAGE_SELECT:
+        return <TravelImageSelectScreen />
+      case SCREENS.TRAVEL_TAP_PAIR:
+        return <TravelTapPairScreen />
+      case SCREENS.TRAVEL_TRANSLATION:
+        return <TravelTranslationScreen />
+      case SCREENS.TRAVEL_TRUE_FALSE:
+        return <TravelTrueFalseScreen />
+      case SCREENS.TRAVEL_SENTENCE_BUILDER:
+        return <TravelSentenceBuilderScreen />
+      case SCREENS.TRAVEL_FILL_BLANK:
+        return <TravelFillBlankScreen />
+      case SCREENS.TRAVEL_AUDIO_TRANSCRIPTION:
+        return <TravelAudioTranscriptionScreen />
+      case SCREENS.TRAVEL_SPEAKING_DRILL:
+        return <TravelSpeakingDrillScreen />
+      case SCREENS.TRAVEL_AUDIO_DISCRIMINATION:
+        return <TravelAudioDiscriminationScreen />
+      case SCREENS.TRAVEL_ROLEPLAY:
+        return <TravelRoleplayScreen />
+      case SCREENS.TRAVEL_SUCCESS:
+        return <TravelSuccessScreen />
       case SCREENS.DASHBOARD:
       default:
         // Handle tab-based navigation for dashboard

@@ -5,7 +5,7 @@ import { useNavigation } from '../hooks/useNavigation.js'
 // Dashboard components
 import HeroCard from '../components/Dashboard/HeroCard.jsx'
 import QuickWinCard from '../components/Dashboard/QuickWinCard.jsx'
-import ModuleList, { LockedModule3 } from '../components/Dashboard/ModuleList.jsx'
+import ModuleList from '../components/Dashboard/ModuleList.jsx'
 import UpsellBanner from '../components/Dashboard/UpsellBanner.jsx'
 
 /**
@@ -34,6 +34,7 @@ function DashboardScreen() {
     showVocabDrillIntro,
     showVIPSurvivalIntro,
     showVIPAccessOffer,
+    showTravelImageSelect,
     setActiveTab
   } = useNavigation()
 
@@ -95,6 +96,13 @@ function DashboardScreen() {
     showVIPAccessOffer()
   }
 
+  /**
+   * Navigate to Travel Lesson - Vamos a Viajar (Module 3, L1)
+   */
+  const handleTravelLesson = () => {
+    showTravelImageSelect()
+  }
+
   return (
     <Box
       sx={{
@@ -127,15 +135,16 @@ function DashboardScreen() {
         />
       </Box>
 
-      {/* Module List - Curriculum with expandable lessons (Module 1 + Module 2 only) */}
+      {/* Module List - Curriculum with expandable lessons (all modules including unlocked Module 3) */}
       <ModuleList
         onSerEstarClick={handleSerEstarConcept}
         onVocabDrillClick={handleVocabDrill}
         onVIPSurvivalClick={handleVIPSurvival}
+        onTravelLessonClick={handleTravelLesson}
         showLockedModule={false}
       />
 
-      {/* Upsell Banner - Human tutor booking (positioned between Module 2 and Module 3) */}
+      {/* Upsell Banner - Human tutor booking */}
       <Box sx={{ mb: 3 }}>
         <UpsellBanner
           upsellText={config.upsell_text}
@@ -143,9 +152,6 @@ function DashboardScreen() {
           onBookClick={handleVIPAccessOffer}
         />
       </Box>
-
-      {/* Locked Module 3 - Travel Essentials (after Upsell Banner) */}
-      <LockedModule3 />
     </Box>
   )
 }

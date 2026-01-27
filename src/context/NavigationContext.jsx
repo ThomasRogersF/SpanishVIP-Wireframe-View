@@ -28,6 +28,18 @@ export const SCREENS = {
   VIP_ROLEPLAY: 'vipRoleplay',
   VIP_SUCCESS: 'vipSuccess',
   VIP_ACCESS_OFFER: 'vipAccessOffer',
+  // Travel lesson flow (Module 3, Lesson 1)
+  TRAVEL_IMAGE_SELECT: 'travelImageSelect',
+  TRAVEL_TAP_PAIR: 'travelTapPair',
+  TRAVEL_TRANSLATION: 'travelTranslation',
+  TRAVEL_TRUE_FALSE: 'travelTrueFalse',
+  TRAVEL_SENTENCE_BUILDER: 'travelSentenceBuilder',
+  TRAVEL_FILL_BLANK: 'travelFillBlank',
+  TRAVEL_AUDIO_TRANSCRIPTION: 'travelAudioTranscription',
+  TRAVEL_SPEAKING_DRILL: 'travelSpeakingDrill',
+  TRAVEL_AUDIO_DISCRIMINATION: 'travelAudioDiscrimination',
+  TRAVEL_ROLEPLAY: 'travelRoleplay',
+  TRAVEL_SUCCESS: 'travelSuccess',
 };
 
 // Screens that should hide StatusBar and BottomNav
@@ -55,6 +67,18 @@ const FULL_SCREEN_SCREENS = [
   SCREENS.VIP_ROLEPLAY,
   SCREENS.VIP_SUCCESS,
   SCREENS.VIP_ACCESS_OFFER,
+  // Travel lesson flow screens
+  SCREENS.TRAVEL_IMAGE_SELECT,
+  SCREENS.TRAVEL_TAP_PAIR,
+  SCREENS.TRAVEL_TRANSLATION,
+  SCREENS.TRAVEL_TRUE_FALSE,
+  SCREENS.TRAVEL_SENTENCE_BUILDER,
+  SCREENS.TRAVEL_FILL_BLANK,
+  SCREENS.TRAVEL_AUDIO_TRANSCRIPTION,
+  SCREENS.TRAVEL_SPEAKING_DRILL,
+  SCREENS.TRAVEL_AUDIO_DISCRIMINATION,
+  SCREENS.TRAVEL_ROLEPLAY,
+  SCREENS.TRAVEL_SUCCESS,
 ];
 
 // Maximum history size to prevent memory issues
@@ -335,6 +359,51 @@ export function NavigationProvider({ children }) {
     navigateTo(SCREENS.VIP_ACCESS_OFFER);
   }, [navigateTo]);
 
+  // Travel lesson flow navigation (Module 3, Lesson 1)
+  const showTravelImageSelect = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_IMAGE_SELECT);
+  }, [navigateTo]);
+
+  const showTravelTapPair = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_TAP_PAIR);
+  }, [navigateTo]);
+
+  const showTravelTranslation = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_TRANSLATION);
+  }, [navigateTo]);
+
+  const showTravelTrueFalse = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_TRUE_FALSE);
+  }, [navigateTo]);
+
+  const showTravelSentenceBuilder = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_SENTENCE_BUILDER);
+  }, [navigateTo]);
+
+  const showTravelFillBlank = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_FILL_BLANK);
+  }, [navigateTo]);
+
+  const showTravelAudioTranscription = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_AUDIO_TRANSCRIPTION);
+  }, [navigateTo]);
+
+  const showTravelSpeakingDrill = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_SPEAKING_DRILL);
+  }, [navigateTo]);
+
+  const showTravelAudioDiscrimination = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_AUDIO_DISCRIMINATION);
+  }, [navigateTo]);
+
+  const showTravelRoleplay = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_ROLEPLAY);
+  }, [navigateTo]);
+
+  const showTravelSuccess = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_SUCCESS);
+  }, [navigateTo]);
+
   /**
    * Handle bottom nav tab changes
    * @param {string} tabValue - Tab value to switch to
@@ -453,6 +522,19 @@ export function NavigationProvider({ children }) {
     showVIPSuccess,
     showVIPAccessOffer,
     
+    // Travel lesson flow
+    showTravelImageSelect,
+    showTravelTapPair,
+    showTravelTranslation,
+    showTravelTrueFalse,
+    showTravelSentenceBuilder,
+    showTravelFillBlank,
+    showTravelAudioTranscription,
+    showTravelSpeakingDrill,
+    showTravelAudioDiscrimination,
+    showTravelRoleplay,
+    showTravelSuccess,
+    
     // Tab and history navigation
     setActiveTab,
     goBack,
@@ -497,6 +579,17 @@ export function NavigationProvider({ children }) {
     showVIPRoleplay,
     showVIPSuccess,
     showVIPAccessOffer,
+    showTravelImageSelect,
+    showTravelTapPair,
+    showTravelTranslation,
+    showTravelTrueFalse,
+    showTravelSentenceBuilder,
+    showTravelFillBlank,
+    showTravelAudioTranscription,
+    showTravelSpeakingDrill,
+    showTravelAudioDiscrimination,
+    showTravelRoleplay,
+    showTravelSuccess,
     setActiveTab,
     goBack,
     isFullScreen,

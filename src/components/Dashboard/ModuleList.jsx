@@ -14,17 +14,19 @@ import { iosButtonStyle } from '../shared/sharedStyles.js'
 /**
  * ModuleList - Curriculum module list with expandable lessons
  * Displays modules matching the original dashboard HTML structure
- * 
+ *
  * Props:
  * - onVIPSurvivalClick: Handler for VIP Survival Phrases lesson (Module 1, L4)
  * - onVocabDrillClick: Handler for Vocabulary Drill lesson (Module 2, L2)
  * - onSerEstarClick: Handler for Ser vs Estar lesson (Module 2, L3)
+ * - onTravelLessonClick: Handler for Travel Lesson - Vamos a Viajar (Module 3, L1)
  * - showLockedModule: Boolean to conditionally render locked Module 3 (default true)
  */
 function ModuleList({
   onSerEstarClick,
   onVocabDrillClick,
   onVIPSurvivalClick,
+  onTravelLessonClick,
   showLockedModule = true
 }) {
   const [module1Expanded, setModule1Expanded] = useState(false)
@@ -297,6 +299,75 @@ function ModuleList({
     </Box>
   )
 
+  // Module 3 lessons data - Travel Essentials (Active)
+  const module3Lessons = [
+    {
+      id: 1,
+      title: 'L1: Vamos a Viajar',
+      subtitle: 'Ready • 25 min',
+      status: 'ready',
+      onClick: onTravelLessonClick
+    },
+    { id: 2, title: 'L2: At the Hotel', subtitle: 'Locked • 20 min', status: 'locked' },
+    { id: 3, title: 'L3: Asking for Directions', subtitle: 'Locked • 18 min', status: 'locked' },
+  ]
+
+  // Render active Module 3 component
+  const renderActiveModule3 = () => (
+    <Box sx={{ mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          mb: 1.5
+        }}
+      >
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: '8px',
+            backgroundColor: '#8B5CF6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: '#FFFFFF'
+            }}
+          />
+        </Box>
+        <Box>
+          <Typography sx={{ fontWeight: 600, fontSize: '1rem', color: '#111827' }}>
+            Module 3: Travel Essentials
+          </Typography>
+          <Typography sx={{ fontSize: '0.75rem', color: '#8B5CF6', fontWeight: 500 }}>
+            Ready
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Lessons List */}
+      <Box
+        sx={{
+          ml: 2,
+          pl: 3,
+          borderLeft: '2px solid #E5E7EB'
+        }}
+      >
+        <List sx={{ py: 0 }}>
+          {module3Lessons.map(lesson => renderLessonItem(lesson, false))}
+        </List>
+      </Box>
+    </Box>
+  )
+
   return (
     <Box sx={{ mt: 3 }}>
       <Typography
@@ -440,8 +511,8 @@ function ModuleList({
         </Box>
       </Box>
 
-      {/* Module 3 - Travel Essentials (Locked) - Conditionally rendered */}
-      {showLockedModule && renderLockedModule3()}
+      {/* Module 3 - Travel Essentials - Conditionally rendered */}
+      {showLockedModule ? renderLockedModule3() : renderActiveModule3()}
     </Box>
   )
 }
