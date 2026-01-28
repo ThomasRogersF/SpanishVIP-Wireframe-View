@@ -27,6 +27,7 @@ function ModuleList({
   onVocabDrillClick,
   onVIPSurvivalClick,
   onTravelLessonClick,
+  onGrammarGuideClick,
   showLockedModule = true
 }) {
   const [module1Expanded, setModule1Expanded] = useState(false)
@@ -308,7 +309,13 @@ function ModuleList({
       status: 'ready',
       onClick: onTravelLessonClick
     },
-    { id: 2, title: 'L2: At the Hotel', subtitle: 'Locked • 20 min', status: 'locked' },
+    {
+      id: 2,
+      title: 'L2: At the Hotel',
+      subtitle: 'Ready • 20 min',
+      status: 'ready',
+      onClick: onGrammarGuideClick
+    },
     { id: 3, title: 'L3: Asking for Directions', subtitle: 'Locked • 18 min', status: 'locked' },
   ]
 

@@ -40,6 +40,9 @@ export const SCREENS = {
   TRAVEL_AUDIO_DISCRIMINATION: 'travelAudioDiscrimination',
   TRAVEL_ROLEPLAY: 'travelRoleplay',
   TRAVEL_SUCCESS: 'travelSuccess',
+  GRAMMAR_GUIDE: 'grammarGuide',
+  // Module 3, Lesson 2
+  TRAVEL_LESSON_2_INTRO: 'travelLesson2Intro',
 };
 
 // Screens that should hide StatusBar and BottomNav
@@ -79,6 +82,8 @@ const FULL_SCREEN_SCREENS = [
   SCREENS.TRAVEL_AUDIO_DISCRIMINATION,
   SCREENS.TRAVEL_ROLEPLAY,
   SCREENS.TRAVEL_SUCCESS,
+  SCREENS.GRAMMAR_GUIDE,
+  SCREENS.TRAVEL_LESSON_2_INTRO,
 ];
 
 // Maximum history size to prevent memory issues
@@ -404,6 +409,15 @@ export function NavigationProvider({ children }) {
     navigateTo(SCREENS.TRAVEL_SUCCESS);
   }, [navigateTo]);
 
+  const showGrammarGuide = useCallback(() => {
+    navigateTo(SCREENS.GRAMMAR_GUIDE);
+  }, [navigateTo]);
+
+  // Module 3, Lesson 2 navigation
+  const showTravelLesson2Intro = useCallback(() => {
+    navigateTo(SCREENS.TRAVEL_LESSON_2_INTRO);
+  }, [navigateTo]);
+
   /**
    * Handle bottom nav tab changes
    * @param {string} tabValue - Tab value to switch to
@@ -534,6 +548,8 @@ export function NavigationProvider({ children }) {
     showTravelAudioDiscrimination,
     showTravelRoleplay,
     showTravelSuccess,
+    showGrammarGuide,
+    showTravelLesson2Intro,
     
     // Tab and history navigation
     setActiveTab,
@@ -590,6 +606,8 @@ export function NavigationProvider({ children }) {
     showTravelAudioDiscrimination,
     showTravelRoleplay,
     showTravelSuccess,
+    showGrammarGuide,
+    showTravelLesson2Intro,
     setActiveTab,
     goBack,
     isFullScreen,
