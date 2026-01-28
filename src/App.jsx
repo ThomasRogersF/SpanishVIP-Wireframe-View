@@ -71,6 +71,7 @@ const TravelAudioDiscriminationScreen = lazy(() => import('./screens/TravelAudio
 const TravelRoleplayScreen = lazy(() => import('./screens/TravelRoleplayScreen.jsx'))
 const TravelSuccessScreen = lazy(() => import('./screens/TravelSuccessScreen.jsx'))
 const GrammarGuidebookScreen = lazy(() => import('./screens/GrammarGuidebookScreen.jsx'))
+const VideoLessonScreen = lazy(() => import('./screens/VideoLessonScreen.jsx'))
 
 function ProfileScreen() {
   // Initialize state from mock data for future state management
@@ -364,6 +365,8 @@ function AppLayout() {
         return <TravelSuccessScreen />
       case SCREENS.GRAMMAR_GUIDE:
         return <GrammarGuidebookScreen />
+      case SCREENS.VIDEO_LESSON_M3L3:
+        return <VideoLessonScreen />
       case SCREENS.DASHBOARD:
       default:
         // Handle tab-based navigation for dashboard
