@@ -4,6 +4,10 @@ import { createTheme } from '@mui/material/styles'
  * createMuiTheme - Dynamic theme generator that responds to SDK color changes
  * Accepts SDK configuration and creates a theme with dynamic palette colors
  * 
+ * Spacing System: 8px base grid
+ * Use MUI's spacing function: theme.spacing(1) = 8px
+ * Common values: 8px (1), 16px (2), 24px (3), 32px (4), 48px (6)
+ *
  * Includes touch-optimized styles for mobile:
  * - Minimum 48x48px touch targets for all interactive elements
  * - touch-action: manipulation to prevent zoom on double-tap
@@ -11,30 +15,38 @@ import { createTheme } from '@mui/material/styles'
  * - Haptic-like visual feedback on press
  *
  * @param {Object} sdkConfig - SDK configuration object with color properties
- * @param {string} sdkConfig.hero_card_bg - Hero card background color (fallback: '#0AA6A6')
- * @param {string} sdkConfig.surface_color - App background color (fallback: '#F3F4F6')
+ * @param {string} sdkConfig.hero_card_bg - Hero card background color (fallback: '#059669')
+ * @param {string} sdkConfig.surface_color - App background color (fallback: '#fafaf9')
  * @param {string} sdkConfig.text_color - Primary text color (fallback: '#111827')
  * @returns {Object} MUI theme object with dynamic palette
  */
 function createMuiTheme(sdkConfig = {}) {
-  const primaryColor = sdkConfig.hero_card_bg || '#0AA6A6'
+  const primaryColor = sdkConfig.hero_card_bg || '#059669'
+  
+  // Get base MUI shadows to customize
+  const baseShadows = createTheme().shadows
+  
+  // Custom shadow tokens
+  const customShadows = [...baseShadows]
+  customShadows[1] = '0 2px 8px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.02)' // Soft ambient for cards
+  customShadows[2] = '0 8px 24px rgba(5, 150, 105, 0.15)' // Elevated for buttons/active states
   
   return createTheme({
     palette: {
       primary: {
         main: primaryColor,
-        light: '#3DB8B8',
-        dark: '#078585',
+        light: '#10B981', // Vibrant emerald for active states
+        dark: '#047857', // Darker emerald for depth
         contrastText: '#FFFFFF'
       },
       secondary: {
-        main: '#F97316',
-        light: '#FB923C',
-        dark: '#EA580C',
+        main: '#f59e0b', // Warm coral/saffron for streaks and energy
+        light: '#fbbf24',
+        dark: '#d97706',
         contrastText: '#FFFFFF'
       },
       background: {
-        default: sdkConfig.surface_color || '#F3F4F6',
+        default: sdkConfig.surface_color || '#fafaf9', // Warm off-white
         paper: '#FFFFFF'
       },
       text: {
@@ -42,13 +54,20 @@ function createMuiTheme(sdkConfig = {}) {
         secondary: '#6B7280'
       },
       success: {
-        main: '#22C55E'
+        main: '#10b981' // Sage green (updated from #22C55E)
       },
       warning: {
         main: '#F59E0B'
       },
       error: {
         main: '#EF4444'
+      },
+      // Status colors for lesson/module states
+      status: {
+        completed: '#10b981', // Sage green
+        active: '#059669', // Vibrant emerald
+        locked: 'rgba(156, 163, 175, 0.5)', // Cool gray with 50% opacity
+        ready: '#8b5cf6' // Purple
       }
     },
     typography: {
@@ -83,7 +102,21 @@ function createMuiTheme(sdkConfig = {}) {
       fontWeightBold: 700
     },
     shape: {
-      borderRadius: 12
+      borderRadius: 16, // Default for cards
+      borderRadiusButton: 12, // For buttons
+      borderRadiusPill: 9999 // For pills/badges
+    },
+    shadows: customShadows,
+    // Custom gradient utilities
+    gradients: {
+      primary: 'linear-gradient(135deg, #059669 0%, #0d9488 100%)',
+      secondary: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      success: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+    },
+    // Custom shadow tokens (named)
+    customShadows: {
+      card: '0 2px 8px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.02)',
+      elevated: '0 8px 24px rgba(5, 150, 105, 0.15)'
     },
     components: {
       MuiCssBaseline: {
@@ -135,7 +168,7 @@ function createMuiTheme(sdkConfig = {}) {
             },
             // Focus visible for accessibility
             '&:focus-visible': {
-              outline: `3px solid ${primaryColor}`,
+              outline: `3px solid #059669`,
               outlineOffset: '2px'
             }
           },
@@ -197,7 +230,9 @@ function createMuiTheme(sdkConfig = {}) {
           root: {
             borderRadius: 16,
             // Smooth transition for interactive cards
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+            // Use new shadow token
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.02)'
           }
         }
       },
@@ -222,6 +257,7 @@ function createMuiTheme(sdkConfig = {}) {
       MuiChip: {
         styleOverrides: {
           root: {
+            borderRadius: 9999, // Pill shape
             // Ensure chips are touch-friendly when clickable
             '&.MuiChip-clickable': {
               minHeight: 36,
@@ -272,7 +308,7 @@ function createMuiTheme(sdkConfig = {}) {
         styleOverrides: {
           root: {
             // Customize ripple color to match theme
-            color: `${primaryColor}40` // 25% opacity
+            color: 'rgba(5, 150, 105, 0.25)' // Updated to new primary
           },
           ripple: {
             // Faster ripple animation for snappier feedback
@@ -286,8 +322,8 @@ function createMuiTheme(sdkConfig = {}) {
 
 // Default theme for initial render before SDK loads
 const defaultTheme = createMuiTheme({
-  hero_card_bg: '#0AA6A6',
-  surface_color: '#F3F4F6',
+  hero_card_bg: '#059669', // Changed from #0AA6A6
+  surface_color: '#fafaf9', // Changed from #F3F4F6
   text_color: '#111827'
 })
 

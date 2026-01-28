@@ -188,6 +188,7 @@ SpanishVIP-Wireframe-View/
 │   │       ├── StatCard.jsx
 │   │       ├── LoadingScreen.jsx
 │   │       ├── ErrorBoundary.jsx
+│   │       ├── PullToRefreshIndicator.jsx
 │   │       ├── sharedStyles.js
 │   │       └── sharedAnimations.js
 │   │
@@ -216,7 +217,8 @@ SpanishVIP-Wireframe-View/
 │   │   ├── useSDKConfig.js     # SDK config hook
 │   │   ├── useRecording.js     # Voice recording hook
 │   │   ├── useTimer.js         # Timer hook
-│   │   └── useCountdown.js     # Countdown hook
+│   │   ├── useCountdown.js     # Countdown hook
+│   │   └── usePullToRefresh.js # Pull-to-refresh touch gesture hook
 │   │
 │   ├── data/                   # Mock data and content
 │   │   ├── mockUserData.js     # User profile/settings data
@@ -241,6 +243,7 @@ The main entry point displaying:
 - **Quick Win Card**: Short activity CTAs for time-constrained users
 - **Module List**: Expandable curriculum with lesson progression
 - **Upsell Banner**: Human tutor booking promotion
+- **Pull-to-Refresh**: Spanish-themed refresh animation (coffee cup or flag variants)
 
 ### 2. Lesson System
 Multiple lesson flows supporting various activity types:
@@ -796,7 +799,7 @@ Based on the current wireframe architecture, potential enhancements include:
 - [ ] Screen reader optimization
 - [ ] Keyboard navigation enhancement
 - [ ] High contrast mode
-- [ ] Reduced motion support
+- [x] Reduced motion support (pull-to-refresh respects prefers-reduced-motion)
 
 ---
 
