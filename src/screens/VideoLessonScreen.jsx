@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  IconButton,
-  Button,
-  Card,
-  CardContent
-} from '@mui/material';
+import { Box, Typography, IconButton, Button, Card, CardContent } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigation } from '../hooks/useNavigation';
 import { iosButtonStyle } from '../components/shared/sharedStyles';
@@ -15,19 +8,13 @@ import VimeoPlayer from '../components/Lesson/VimeoPlayer';
 
 const VideoLessonScreen = () => {
   const { showDashboard, showSuccess } = useNavigation();
-
-  // State Management
-  const [isVideoComplete, setIsVideoComplete] = useState(false);
   const [showCompletionPrompt, setShowCompletionPrompt] = useState(false);
 
-  // Video Complete Handler
-  const handleVideoComplete = () => {
-    setIsVideoComplete(true);
+  const handleMarkComplete = () => {
     setShowCompletionPrompt(true);
   };
 
-  // Mark as Complete Handler
-  const handleMarkComplete = () => {
+  const handleSuccess = () => {
     showSuccess();
   };
 
@@ -111,7 +98,6 @@ const VideoLessonScreen = () => {
         <VimeoPlayer
           videoId="1159303752"
           title="39A - El Participio"
-          onComplete={handleVideoComplete}
         />
 
         {/* Completion Prompt Card */}
@@ -165,27 +151,22 @@ const VideoLessonScreen = () => {
         <Button
           fullWidth
           variant="contained"
-          onClick={handleMarkComplete}
-          disabled={!isVideoComplete}
+          onClick={showCompletionPrompt ? handleSuccess : handleMarkComplete}
           sx={{
             ...iosButtonStyle,
-            bgcolor: isVideoComplete ? '#0AA6A6' : '#CBD5E1',
+            bgcolor: '#0AA6A6',
             color: 'white',
             py: 1.5,
             fontSize: '1rem',
             fontWeight: 600,
             fontFamily: 'Lexend, sans-serif',
             '&:hover': {
-              bgcolor: isVideoComplete ? '#089999' : '#CBD5E1'
-            },
-            '&:disabled': {
-              bgcolor: '#CBD5E1',
-              color: '#94A3B8'
+              bgcolor: '#089999'
             }
           }}
-          aria-label="Mark lesson as complete"
+          aria-label={showCompletionPrompt ? 'Continue to success screen' : 'Mark lesson as complete'}
         >
-          Mark as Complete
+          {showCompletionPrompt ? 'Continue' : 'Mark as Complete'}
         </Button>
       </Box>
     </Box>
