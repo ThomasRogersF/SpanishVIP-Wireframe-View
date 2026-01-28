@@ -36,6 +36,7 @@ function DashboardScreen() {
     showVIPAccessOffer,
     showTravelImageSelect,
     showGrammarGuide,
+    showVideoLessonM3L3,
     setActiveTab
   } = useNavigation()
 
@@ -111,6 +112,13 @@ function DashboardScreen() {
     showGrammarGuide()
   }
 
+  /**
+   * Navigate to Video Lesson - El Participio (Module 3, L3)
+   */
+  const handleVideoLessonM3L3 = () => {
+    showVideoLessonM3L3()
+  }
+
   return (
     <Box
       sx={{
@@ -150,6 +158,7 @@ function DashboardScreen() {
         onVIPSurvivalClick={handleVIPSurvival}
         onTravelLessonClick={handleTravelLesson}
         onGrammarGuideClick={handleGrammarGuide}
+        onVideoLessonM3L3Click={handleVideoLessonM3L3}
         showLockedModule={false}
       />
 

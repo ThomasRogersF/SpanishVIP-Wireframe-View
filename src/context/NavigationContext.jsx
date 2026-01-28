@@ -43,6 +43,8 @@ export const SCREENS = {
   GRAMMAR_GUIDE: 'grammarGuide',
   // Module 3, Lesson 2
   TRAVEL_LESSON_2_INTRO: 'travelLesson2Intro',
+  // Module 3, Lesson 3
+  VIDEO_LESSON_M3L3: 'videoLessonM3L3',
 };
 
 // Screens that should hide StatusBar and BottomNav
@@ -84,6 +86,7 @@ const FULL_SCREEN_SCREENS = [
   SCREENS.TRAVEL_SUCCESS,
   SCREENS.GRAMMAR_GUIDE,
   SCREENS.TRAVEL_LESSON_2_INTRO,
+  SCREENS.VIDEO_LESSON_M3L3,
 ];
 
 // Maximum history size to prevent memory issues
@@ -418,6 +421,11 @@ export function NavigationProvider({ children }) {
     navigateTo(SCREENS.TRAVEL_LESSON_2_INTRO);
   }, [navigateTo]);
 
+  // Module 3, Lesson 3 navigation
+  const showVideoLessonM3L3 = useCallback(() => {
+    navigateTo(SCREENS.VIDEO_LESSON_M3L3);
+  }, [navigateTo]);
+
   /**
    * Handle bottom nav tab changes
    * @param {string} tabValue - Tab value to switch to
@@ -550,6 +558,7 @@ export function NavigationProvider({ children }) {
     showTravelSuccess,
     showGrammarGuide,
     showTravelLesson2Intro,
+    showVideoLessonM3L3,
     
     // Tab and history navigation
     setActiveTab,
@@ -608,6 +617,7 @@ export function NavigationProvider({ children }) {
     showTravelSuccess,
     showGrammarGuide,
     showTravelLesson2Intro,
+    showVideoLessonM3L3,
     setActiveTab,
     goBack,
     isFullScreen,

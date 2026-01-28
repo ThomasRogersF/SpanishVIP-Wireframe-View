@@ -20,6 +20,7 @@ import { iosButtonStyle } from '../shared/sharedStyles.js'
  * - onVocabDrillClick: Handler for Vocabulary Drill lesson (Module 2, L2)
  * - onSerEstarClick: Handler for Ser vs Estar lesson (Module 2, L3)
  * - onTravelLessonClick: Handler for Travel Lesson - Vamos a Viajar (Module 3, L1)
+ * - onVideoLessonM3L3Click: Handler for Video Lesson - El Participio (Module 3, L3)
  * - showLockedModule: Boolean to conditionally render locked Module 3 (default true)
  */
 function ModuleList({
@@ -28,6 +29,7 @@ function ModuleList({
   onVIPSurvivalClick,
   onTravelLessonClick,
   onGrammarGuideClick,
+  onVideoLessonM3L3Click,
   showLockedModule = true
 }) {
   const [module1Expanded, setModule1Expanded] = useState(false)
@@ -316,7 +318,13 @@ function ModuleList({
       status: 'ready',
       onClick: onGrammarGuideClick
     },
-    { id: 3, title: 'L3: Asking for Directions', subtitle: 'Locked • 18 min', status: 'locked' },
+    {
+      id: 3,
+      title: 'L3: Video Lesson - El Participio',
+      subtitle: 'Ready • 15 min',
+      status: 'ready',
+      onClick: onVideoLessonM3L3Click
+    },
   ]
 
   // Render active Module 3 component
