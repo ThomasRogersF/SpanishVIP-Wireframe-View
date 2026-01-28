@@ -35,6 +35,7 @@ function DashboardScreen() {
     showVIPSurvivalIntro,
     showVIPAccessOffer,
     showTravelImageSelect,
+    showGrammarGuide,
     setActiveTab
   } = useNavigation()
 
@@ -103,6 +104,13 @@ function DashboardScreen() {
     showTravelImageSelect()
   }
 
+  /**
+   * Navigate to Grammar Guide before Module 3, Lesson 2
+   */
+  const handleGrammarGuide = () => {
+    showGrammarGuide()
+  }
+
   return (
     <Box
       sx={{
@@ -141,6 +149,7 @@ function DashboardScreen() {
         onVocabDrillClick={handleVocabDrill}
         onVIPSurvivalClick={handleVIPSurvival}
         onTravelLessonClick={handleTravelLesson}
+        onGrammarGuideClick={handleGrammarGuide}
         showLockedModule={false}
       />
 
