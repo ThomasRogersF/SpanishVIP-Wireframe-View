@@ -33,6 +33,7 @@ import SettingsButton from './components/Settings/SettingsButton.jsx'
 import mockUserData from './data/mockUserData.js'
 
 // Lazy-loaded screen components (loaded on demand)
+const LoginScreen = lazy(() => import('./screens/LoginScreen.jsx'))
 const DashboardScreen = lazy(() => import('./screens/DashboardScreen.jsx'))
 const LessonScreen = lazy(() => import('./screens/LessonScreen.jsx'))
 const SuccessScreen = lazy(() => import('./screens/SuccessScreen.jsx'))
@@ -148,8 +149,11 @@ function SettingsScreen() {
   }
 
   // Action handlers
+  const { showLogin } = useNavigation()
+
   const handleLogout = () => {
     console.log('Logout clicked')
+    showLogin()
   }
 
   const handleExportData = () => {
@@ -291,6 +295,8 @@ function AppLayout() {
   const renderScreen = () => {
     // Handle screen-based navigation
     switch (currentScreen) {
+      case SCREENS.LOGIN:
+        return <LoginScreen />
       case SCREENS.LESSON:
         return <LessonScreen />
       case SCREENS.SUCCESS:
