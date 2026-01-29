@@ -30,6 +30,7 @@ function ModuleList({
   onTravelLessonClick,
   onGrammarGuideClick,
   onVideoLessonM3L3Click,
+  onModuleGuidebookClick,
   showLockedModule = true
 }) {
   const [module1Expanded, setModule1Expanded] = useState(false)
@@ -44,7 +45,8 @@ function ModuleList({
     { id: 4, title: 'L4: The VIP Survival Phrases', subtitle: 'Ready • 10 min', status: 'ready', onClick: onVIPSurvivalClick },
     { id: 5, title: 'L5: Subject Pronouns', subtitle: 'Locked • 15 min', status: 'locked' },
     { id: 6, title: 'L6: I am... (Intro to Ser)', subtitle: 'Locked • 18 min', status: 'locked' },
-    { id: 7, title: 'L7: Module 1 Exam', subtitle: 'Locked • 25 min', status: 'locked' }
+    { id: 7, title: 'L7: Module 1 Exam', subtitle: 'Locked • 25 min', status: 'locked' },
+    { id: 8, title: '📖 Module 1 Guidebook', subtitle: 'Reference • Always Available', status: 'ready', onClick: () => onModuleGuidebookClick('guide_b1_u01') }
   ]
 
   // Module 2 lessons data - matches original HTML: "Module 2: Cafe Culture" (Active)
@@ -53,7 +55,8 @@ function ModuleList({
     { id: 2, title: 'L2: Vocabulary Drill', subtitle: 'Completed', status: 'completed', onClick: onVocabDrillClick },
     { id: 3, title: 'L3: Grammar - Ser vs Estar', subtitle: 'Completed', status: 'completed', onClick: onSerEstarClick },
     { id: 4, title: 'L4: Roleplay - The Cafe', subtitle: 'In Progress - 60%', status: 'active' },
-    { id: 5, title: 'L5: Unit Exam', subtitle: 'Locked', status: 'locked' }
+    { id: 5, title: 'L5: Unit Exam', subtitle: 'Locked', status: 'locked' },
+    { id: 6, title: '📖 Module 2 Guidebook', subtitle: 'Reference • Always Available', status: 'ready', onClick: () => onModuleGuidebookClick('guide_b1_u01') }
   ]
 
   // Render status icon based on lesson status
@@ -327,6 +330,7 @@ function ModuleList({
       status: 'ready',
       onClick: onVideoLessonM3L3Click
     },
+    { id: 4, title: '📖 Module 3 Guidebook', subtitle: 'Reference • Always Available', status: 'ready', onClick: () => onModuleGuidebookClick('guide_b1_u01') }
   ]
 
   // Render active Module 3 component

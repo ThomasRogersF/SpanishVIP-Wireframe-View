@@ -25,7 +25,7 @@ function HeroCard({
       sx={{
         borderRadius: '24px',
         padding: '24px',
-        backgroundColor: backgroundColor,
+        background: 'linear-gradient(135deg, #27cab2 0%, #1077d8 100%)',
         color: textColor,
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
       }}
@@ -132,7 +132,7 @@ function HeroCard({
         sx={{
           mt: 3,
           backgroundColor: buttonColor,
-          color: backgroundColor,
+          color: '#0F766E',
           fontWeight: 600,
           textTransform: 'none',
           borderRadius: '12px',

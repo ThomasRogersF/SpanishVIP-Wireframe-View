@@ -36,6 +36,7 @@ function DashboardScreen() {
     showVIPAccessOffer,
     showTravelImageSelect,
     showGrammarGuide,
+    showModuleGuidebook,
     showVideoLessonM3L3,
     setActiveTab
   } = useNavigation()
@@ -113,6 +114,13 @@ function DashboardScreen() {
   }
 
   /**
+   * Navigate to Module Guidebook
+   */
+  const handleModuleGuidebook = (guidebookId) => {
+    showModuleGuidebook(guidebookId)
+  }
+
+  /**
    * Navigate to Video Lesson - El Participio (Module 3, L3)
    */
   const handleVideoLessonM3L3 = () => {
@@ -159,6 +167,7 @@ function DashboardScreen() {
         onTravelLessonClick={handleTravelLesson}
         onGrammarGuideClick={handleGrammarGuide}
         onVideoLessonM3L3Click={handleVideoLessonM3L3}
+        onModuleGuidebookClick={handleModuleGuidebook}
         showLockedModule={false}
       />
 
