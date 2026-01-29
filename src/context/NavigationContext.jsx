@@ -2,6 +2,7 @@ import React, { createContext, useState, useCallback, useMemo, useEffect } from 
 
 // Screen name constants to avoid magic strings
 export const SCREENS = {
+  LOGIN: 'login',
   DASHBOARD: 'dashboard',
   LESSON: 'lesson',
   SUCCESS: 'success',
@@ -49,6 +50,7 @@ export const SCREENS = {
 
 // Screens that should hide StatusBar and BottomNav
 const FULL_SCREEN_SCREENS = [
+  SCREENS.LOGIN,
   SCREENS.LESSON,
   SCREENS.SUCCESS,
   SCREENS.SPEED_DRILL,
@@ -111,7 +113,8 @@ export const NavigationContext = createContext(null);
  */
 export function NavigationProvider({ children }) {
   // Core navigation state
-  const [currentScreen, setCurrentScreen] = useState(SCREENS.DASHBOARD);
+  // Start with LOGIN screen by default
+  const [currentScreen, setCurrentScreen] = useState(SCREENS.LOGIN);
   const [activeTab, setActiveTabState] = useState('home');
   const [screenHistory, setScreenHistory] = useState([]);
   
@@ -203,6 +206,19 @@ export function NavigationProvider({ children }) {
       // Loading will be ended by Suspense when component loads
     }, 50);
   }, [currentScreen, pushToHistory, startLoading]);
+
+  /**
+   * Navigate to login screen
+   */
+  const showLogin = useCallback(() => {
+    setScreenHistory([]);
+    startLoading();
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentScreen(SCREENS.LOGIN);
+      setIsTransitioning(false);
+    }, 50);
+  }, [startLoading]);
 
   /**
    * Reset to dashboard, clear history, reset activeTab to 'home'
@@ -488,7 +504,7 @@ export function NavigationProvider({ children }) {
    * Clear navigation state (for logout scenarios)
    */
   const clearNavigationState = useCallback(() => {
-    setCurrentScreen(SCREENS.DASHBOARD);
+    setCurrentScreen(SCREENS.LOGIN);
     setActiveTabState('home');
     setScreenHistory([]);
     setIsTransitioning(false);
@@ -510,6 +526,7 @@ export function NavigationProvider({ children }) {
     endLoading,
     
     // Navigation functions
+    showLogin,
     showDashboard,
     showLessonRunner,
     showSuccess,
@@ -577,6 +594,7 @@ export function NavigationProvider({ children }) {
     isLoading,
     startLoading,
     endLoading,
+    showLogin,
     showDashboard,
     showLessonRunner,
     showSuccess,

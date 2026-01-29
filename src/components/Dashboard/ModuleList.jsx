@@ -33,6 +33,8 @@ function ModuleList({
   showLockedModule = true
 }) {
   const [module1Expanded, setModule1Expanded] = useState(false)
+  const [module2Expanded, setModule2Expanded] = useState(false)
+  const [module3Expanded, setModule3Expanded] = useState(false)
 
   // Module 1 lessons data - matches original HTML: "Module 1: Greetings & Basics" (7 Lessons)
   const module1Lessons = [
@@ -331,11 +333,20 @@ function ModuleList({
   const renderActiveModule3 = () => (
     <Box sx={{ mb: 3 }}>
       <Box
+        component="button"
+        onClick={() => setModule3Expanded(!module3Expanded)}
         sx={{
           display: 'flex',
           alignItems: 'center',
           gap: 1.5,
-          mb: 1.5
+          width: '100%',
+          mb: 1.5,
+          textAlign: 'left',
+          border: 'none',
+          backgroundColor: 'transparent',
+          cursor: 'pointer',
+          p: 0,
+          ...iosButtonStyle
         }}
       >
         <Box
@@ -350,13 +361,21 @@ function ModuleList({
           }}
         >
           <Box
+            component="svg"
             sx={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              backgroundColor: '#FFFFFF'
+              width: 20,
+              height: 20,
+              color: '#FFFFFF',
+              transform: module3Expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease'
             }}
-          />
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </Box>
         </Box>
         <Box>
           <Typography sx={{ fontWeight: 600, fontSize: '1rem', color: '#111827' }}>
@@ -369,17 +388,19 @@ function ModuleList({
       </Box>
 
       {/* Lessons List */}
-      <Box
-        sx={{
-          ml: 2,
-          pl: 3,
-          borderLeft: '2px solid #E5E7EB'
-        }}
-      >
-        <List sx={{ py: 0 }}>
-          {module3Lessons.map(lesson => renderLessonItem(lesson, false))}
-        </List>
-      </Box>
+      {module3Expanded && (
+        <Box
+          sx={{
+            ml: 2,
+            pl: 3,
+            borderLeft: '2px solid #E5E7EB'
+          }}
+        >
+          <List sx={{ py: 0 }}>
+            {module3Lessons.map(lesson => renderLessonItem(lesson, false))}
+          </List>
+        </Box>
+      )}
     </Box>
   )
 
@@ -475,11 +496,20 @@ function ModuleList({
       {/* Module 2 - Cafe Culture (Active) */}
       <Box sx={{ mb: 3 }}>
         <Box
+          component="button"
+          onClick={() => setModule2Expanded(!module2Expanded)}
           sx={{
             display: 'flex',
             alignItems: 'center',
             gap: 1.5,
-            mb: 1.5
+            width: '100%',
+            mb: 1.5,
+            textAlign: 'left',
+            border: 'none',
+            backgroundColor: 'transparent',
+            cursor: 'pointer',
+            p: 0,
+            ...iosButtonStyle
           }}
         >
           <Box
@@ -494,13 +524,21 @@ function ModuleList({
             }}
           >
             <Box
+              component="svg"
               sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: '#FFFFFF'
+                width: 20,
+                height: 20,
+                color: '#FFFFFF',
+                transform: module2Expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
               }}
-            />
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </Box>
           </Box>
           <Box>
             <Typography sx={{ fontWeight: 600, fontSize: '1rem', color: '#111827' }}>
@@ -513,17 +551,19 @@ function ModuleList({
         </Box>
 
         {/* Lessons List */}
-        <Box
-          sx={{
-            ml: 2,
-            pl: 3,
-            borderLeft: '2px solid #E5E7EB'
-          }}
-        >
-          <List sx={{ py: 0 }}>
-            {module2Lessons.map(lesson => renderLessonItem(lesson, true))}
-          </List>
-        </Box>
+        {module2Expanded && (
+          <Box
+            sx={{
+              ml: 2,
+              pl: 3,
+              borderLeft: '2px solid #E5E7EB'
+            }}
+          >
+            <List sx={{ py: 0 }}>
+              {module2Lessons.map(lesson => renderLessonItem(lesson, true))}
+            </List>
+          </Box>
+        )}
       </Box>
 
       {/* Module 3 - Travel Essentials - Conditionally rendered */}

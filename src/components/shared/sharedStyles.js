@@ -147,7 +147,8 @@ export const scrollbarHide = {
 export const pulseRingStyle = ({
   size = '100%',
   color = 'currentColor',
-  borderWidth = 2
+  borderWidth = 2,
+  background
 } = {}) => ({
   position: 'absolute',
   top: '50%',
@@ -157,6 +158,7 @@ export const pulseRingStyle = ({
   borderRadius: '50%',
   border: `${borderWidth}px solid`,
   borderColor: color,
+  ...(background && { background }),
   transform: 'translate(-50%, -50%)',
   pointerEvents: 'none'
 });
