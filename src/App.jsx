@@ -72,6 +72,7 @@ const TravelAudioDiscriminationScreen = lazy(() => import('./screens/TravelAudio
 const TravelRoleplayScreen = lazy(() => import('./screens/TravelRoleplayScreen.jsx'))
 const TravelSuccessScreen = lazy(() => import('./screens/TravelSuccessScreen.jsx'))
 const GrammarGuidebookScreen = lazy(() => import('./screens/GrammarGuidebookScreen.jsx'))
+const ModuleGuidebookScreen = lazy(() => import('./screens/ModuleGuidebookScreen.jsx'))
 const VideoLessonScreen = lazy(() => import('./screens/VideoLessonScreen.jsx'))
 
 function ProfileScreen() {
@@ -268,7 +269,7 @@ function ThemedApp() {
  * Uses NavigationContext for all navigation state and transitions
  */
 function AppLayout() {
-  const { currentScreen, activeTab, setActiveTab, isFullScreen, isTransitioning, isLoading, endLoading } = useNavigation()
+  const { currentScreen, activeTab, setActiveTab, isFullScreen, isTransitioning, isLoading, endLoading, activeGuidebookId } = useNavigation()
 
   /**
    * End loading state after screen transitions complete
@@ -371,6 +372,8 @@ function AppLayout() {
         return <TravelSuccessScreen />
       case SCREENS.GRAMMAR_GUIDE:
         return <GrammarGuidebookScreen />
+      case SCREENS.MODULE_GUIDEBOOK:
+        return <ModuleGuidebookScreen guidebookId={activeGuidebookId} />
       case SCREENS.VIDEO_LESSON_M3L3:
         return <VideoLessonScreen />
       case SCREENS.DASHBOARD:

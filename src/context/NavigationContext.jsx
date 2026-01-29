@@ -42,6 +42,7 @@ export const SCREENS = {
   TRAVEL_ROLEPLAY: 'travelRoleplay',
   TRAVEL_SUCCESS: 'travelSuccess',
   GRAMMAR_GUIDE: 'grammarGuide',
+  MODULE_GUIDEBOOK: 'moduleGuidebook',
   // Module 3, Lesson 2
   TRAVEL_LESSON_2_INTRO: 'travelLesson2Intro',
   // Module 3, Lesson 3
@@ -87,6 +88,7 @@ const FULL_SCREEN_SCREENS = [
   SCREENS.TRAVEL_ROLEPLAY,
   SCREENS.TRAVEL_SUCCESS,
   SCREENS.GRAMMAR_GUIDE,
+  SCREENS.MODULE_GUIDEBOOK,
   SCREENS.TRAVEL_LESSON_2_INTRO,
   SCREENS.VIDEO_LESSON_M3L3,
 ];
@@ -124,6 +126,9 @@ export function NavigationProvider({ children }) {
   // Loading state for lazy-loaded screens
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStartTime, setLoadingStartTime] = useState(null);
+
+  // State for passing data between screens
+  const [activeGuidebookId, setActiveGuidebookId] = useState(null);
 
   /**
    * Listen for navigate-to-dashboard events from ErrorBoundary
@@ -432,6 +437,13 @@ export function NavigationProvider({ children }) {
     navigateTo(SCREENS.GRAMMAR_GUIDE);
   }, [navigateTo]);
 
+  const showModuleGuidebook = useCallback((guidebookId) => {
+    if (guidebookId) {
+      setActiveGuidebookId(guidebookId);
+    }
+    navigateTo(SCREENS.MODULE_GUIDEBOOK);
+  }, [navigateTo]);
+
   // Module 3, Lesson 2 navigation
   const showTravelLesson2Intro = useCallback(() => {
     navigateTo(SCREENS.TRAVEL_LESSON_2_INTRO);
@@ -520,6 +532,7 @@ export function NavigationProvider({ children }) {
     screenHistory,
     isTransitioning,
     isLoading,
+    activeGuidebookId,
     
     // Loading control
     startLoading,
@@ -574,6 +587,7 @@ export function NavigationProvider({ children }) {
     showTravelRoleplay,
     showTravelSuccess,
     showGrammarGuide,
+    showModuleGuidebook,
     showTravelLesson2Intro,
     showVideoLessonM3L3,
     
@@ -592,6 +606,7 @@ export function NavigationProvider({ children }) {
     screenHistory,
     isTransitioning,
     isLoading,
+    activeGuidebookId,
     startLoading,
     endLoading,
     showLogin,
@@ -634,6 +649,7 @@ export function NavigationProvider({ children }) {
     showTravelRoleplay,
     showTravelSuccess,
     showGrammarGuide,
+    showModuleGuidebook,
     showTravelLesson2Intro,
     showVideoLessonM3L3,
     setActiveTab,
