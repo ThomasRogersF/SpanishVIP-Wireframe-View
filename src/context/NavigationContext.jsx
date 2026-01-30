@@ -47,6 +47,8 @@ export const SCREENS = {
   TRAVEL_LESSON_2_INTRO: 'travelLesson2Intro',
   // Module 3, Lesson 3
   VIDEO_LESSON_M3L3: 'videoLessonM3L3',
+  // Level Selection
+  LEVEL_SELECTION: 'levelSelection',
 };
 
 // Screens that should hide StatusBar and BottomNav
@@ -91,6 +93,7 @@ const FULL_SCREEN_SCREENS = [
   SCREENS.MODULE_GUIDEBOOK,
   SCREENS.TRAVEL_LESSON_2_INTRO,
   SCREENS.VIDEO_LESSON_M3L3,
+  SCREENS.LEVEL_SELECTION,
 ];
 
 // Maximum history size to prevent memory issues
@@ -130,12 +133,15 @@ export function NavigationProvider({ children }) {
   // State for passing data between screens
   const [activeGuidebookId, setActiveGuidebookId] = useState(null);
   const [activeVocabTopic, setActiveVocabTopic] = useState(null);
-  
+
   // Scroll position tracking for ReviewScreen
   const [reviewScrollPosition, setReviewScrollPosition] = useState(0);
-  
+
   // Navigation source tracking for breadcrumb-style back navigation
   const [navigationSource, setNavigationSource] = useState('review');
+
+  // Level state (A0, A1, A2, B1, B2)
+  const [level, setLevel] = useState('A0');
 
   /**
    * Listen for navigate-to-dashboard events from ErrorBoundary
@@ -483,6 +489,13 @@ export function NavigationProvider({ children }) {
   }, [navigateTo]);
 
   /**
+   * Navigate to Level Selection screen
+   */
+  const showLevelSelection = useCallback(() => {
+    navigateTo(SCREENS.LEVEL_SELECTION);
+  }, [navigateTo]);
+
+  /**
    * Handle bottom nav tab changes
    * @param {string} tabValue - Tab value to switch to
    */
@@ -622,6 +635,11 @@ export function NavigationProvider({ children }) {
     showTravelLesson2Intro,
     showVideoLessonM3L3,
 
+    // Level Selection
+    level,
+    setLevel,
+    showLevelSelection,
+
     // Tab and history navigation
     setActiveTab,
     goBack,
@@ -693,6 +711,10 @@ export function NavigationProvider({ children }) {
     clearNavigationState,
     navigateTo,
     pushToHistory,
+    // Level Selection
+    level,
+    setLevel,
+    showLevelSelection,
   ]);
 
   return (

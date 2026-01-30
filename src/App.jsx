@@ -74,6 +74,8 @@ const TravelSuccessScreen = lazy(() => import('./screens/TravelSuccessScreen.jsx
 const GrammarGuidebookScreen = lazy(() => import('./screens/GrammarGuidebookScreen.jsx'))
 const ModuleGuidebookScreen = lazy(() => import('./screens/ModuleGuidebookScreen.jsx'))
 const VideoLessonScreen = lazy(() => import('./screens/VideoLessonScreen.jsx'))
+const LevelSelectionScreen = lazy(() => import('./screens/LevelSelectionScreen.jsx'))
+
 
 function ProfileScreen() {
   // Initialize state from mock data for future state management
@@ -95,7 +97,7 @@ function ProfileScreen() {
           friendCount={profileData.friendCount}
           avatarEmoji={profileData.avatarEmoji}
         />
-        
+
         <Box sx={{ mt: 3 }}>
           <StatisticsSection
             streak={statistics.streak}
@@ -104,7 +106,7 @@ function ProfileScreen() {
             topFinishes={statistics.topFinishes}
           />
         </Box>
-        
+
         <Box sx={{ mt: 3 }}>
           <AchievementsSection
             achievements={achievements}
@@ -376,6 +378,8 @@ function AppLayout() {
         return <ModuleGuidebookScreen guidebookId={activeGuidebookId} />
       case SCREENS.VIDEO_LESSON_M3L3:
         return <VideoLessonScreen />
+      case SCREENS.LEVEL_SELECTION:
+        return <LevelSelectionScreen />
       case SCREENS.DASHBOARD:
       default:
         // Handle tab-based navigation for dashboard
