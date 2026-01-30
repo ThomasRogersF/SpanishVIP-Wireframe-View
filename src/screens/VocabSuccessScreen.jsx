@@ -9,6 +9,7 @@ import StatCard from '../components/shared/StatCard.jsx'
 import SofiaAvatar from '../components/shared/SofiaAvatar.jsx'
 import { useNavigation } from '../hooks/useNavigation.js'
 import { iosButtonStyle } from '../components/shared/sharedStyles'
+import { CATEGORY_TEMPLATE } from '../data/vocabularyShelves.js'
 
 /**
  * VocabSuccessScreen - Drill completion summary with stats and learned words
@@ -17,7 +18,23 @@ import { iosButtonStyle } from '../components/shared/sharedStyles'
  */
 function VocabSuccessScreen() {
   // Get navigation functions from context
-  const { showDashboard } = useNavigation()
+  const { showDashboard, showVocabDrillIntro, showReviewScreen, activeVocabTopic } = useNavigation()
+
+  // Helper function to get next topic from the same category
+  const getNextTopic = () => {
+    if (!activeVocabTopic) return null
+
+    for (const category of CATEGORY_TEMPLATE) {
+      const topicIndex = category.items.findIndex(item => item.id === activeVocabTopic.id)
+      if (topicIndex !== -1 && topicIndex < category.items.length - 1) {
+        return category.items[topicIndex + 1]
+      }
+    }
+    return null
+  }
+
+  const nextTopic = getNextTopic()
+  const wordsLearned = activeVocabTopic?.words || []
 
   return (
     <Box
@@ -84,7 +101,7 @@ function VocabSuccessScreen() {
           fontSize: '16px',
         }}
       >
-        You learned 2 new words
+        You learned {wordsLearned.length} new words
       </Typography>
 
       {/* Stats Section */}
@@ -112,7 +129,7 @@ function VocabSuccessScreen() {
         />
         <StatCard
           icon="📚"
-          value="2"
+          value={wordsLearned.length.toString()}
           label="Words"
           backgroundColor="#FED7AA"
         />
@@ -141,69 +158,40 @@ function VocabSuccessScreen() {
           </Typography>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            {/* Word 1 */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                pb: 1.5,
-                borderBottom: '1px solid #E5E7EB',
-              }}
-            >
-              <Typography sx={{ fontSize: '24px' }}>🍷</Typography>
-              <Box>
-                <Typography
-                  sx={{
-                    fontWeight: '600',
-                    color: '#111827',
-                    fontSize: '14px',
-                  }}
-                >
-                  Tinto
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: '#64748B',
-                    fontSize: '13px',
-                  }}
-                >
-                  Red wine
-                </Typography>
+            {wordsLearned.map((word, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  pb: 1.5,
+                  borderBottom: index < wordsLearned.length - 1 ? '1px solid #E5E7EB' : 'none',
+                }}
+              >
+                <Typography sx={{ fontSize: '24px' }}>{word.emoji}</Typography>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontWeight: '600',
+                      color: '#111827',
+                      fontSize: '14px',
+                    }}
+                  >
+                    {word.spanish}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#64748B',
+                      fontSize: '13px',
+                    }}
+                  >
+                    {word.english}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-
-            {/* Word 2 */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              <Typography sx={{ fontSize: '24px' }}>🧾</Typography>
-              <Box>
-                <Typography
-                  sx={{
-                    fontWeight: '600',
-                    color: '#111827',
-                    fontSize: '14px',
-                  }}
-                >
-                  La Cuenta
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: '#64748B',
-                    fontSize: '13px',
-                  }}
-                >
-                  The bill/check
-                </Typography>
-              </Box>
-            </Box>
+            ))}
           </Box>
         </CardContent>
       </Card>
@@ -243,12 +231,71 @@ function VocabSuccessScreen() {
                   fontSize: '13px',
                 }}
               >
-                These words will help you at restaurants.
+                These words will help you with {activeVocabTopic?.title?.toLowerCase() || 'your Spanish learning'}.
               </Typography>
             </Box>
           </Box>
         </CardContent>
       </Card>
+
+      {/* Next Topic Suggestion Card */}
+      {nextTopic && (
+        <Card
+          sx={{
+            bgcolor: '#EFF6FF',
+            border: '1px solid #BFDBFE',
+            borderRadius: '12px',
+            mb: 3,
+          }}
+        >
+          <CardContent>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: '700',
+                color: '#111827',
+                mb: 1,
+                fontSize: '14px',
+              }}
+            >
+              Continue Learning
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography sx={{ fontSize: '32px' }}>{nextTopic.icon}</Typography>
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  sx={{
+                    fontWeight: '600',
+                    color: '#111827',
+                    fontSize: '14px',
+                  }}
+                >
+                  {nextTopic.title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#64748B',
+                    fontSize: '13px',
+                  }}
+                >
+                  {nextTopic.words.length} words
+                </Typography>
+              </Box>
+              <Button
+                onClick={() => showVocabDrillIntro(nextTopic)}
+                sx={{
+                  ...iosButtonStyle,
+                  bgcolor: '#3B82F6',
+                  color: '#FFFFFF',
+                }}
+              >
+                Start
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Action Buttons */}
       <Box
@@ -275,7 +322,21 @@ function VocabSuccessScreen() {
         <Button
           fullWidth
           variant="text"
-          onClick={() => console.log('Practice Again clicked')}
+          onClick={showReviewScreen}
+          sx={{
+            ...iosButtonStyle,
+            color: '#3B82F6',
+            '&:hover': {
+              backgroundColor: 'rgba(59, 130, 246, 0.08)',
+            },
+          }}
+        >
+          Back to Shelves
+        </Button>
+        <Button
+          fullWidth
+          variant="text"
+          onClick={() => showVocabDrillIntro(activeVocabTopic)}
           sx={{
             ...iosButtonStyle,
             color: '#3B82F6',

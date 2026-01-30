@@ -97,7 +97,7 @@ const FULL_SCREEN_SCREENS = [
 const MAX_HISTORY_SIZE = 10;
 
 // Minimum loading time to prevent flash (in ms)
-const MIN_LOADING_TIME = 150;
+const MIN_LOADING_TIME = 700;
 
 // Create the context
 export const NavigationContext = createContext(null);
@@ -119,16 +119,23 @@ export function NavigationProvider({ children }) {
   const [currentScreen, setCurrentScreen] = useState(SCREENS.LOGIN);
   const [activeTab, setActiveTabState] = useState('home');
   const [screenHistory, setScreenHistory] = useState([]);
-  
+
   // Transition state for smooth animations
   const [isTransitioning, setIsTransitioning] = useState(false);
-  
+
   // Loading state for lazy-loaded screens
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingStartTime, setLoadingStartTime] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingStartTime, setLoadingStartTime] = useState(Date.now());
 
   // State for passing data between screens
   const [activeGuidebookId, setActiveGuidebookId] = useState(null);
+  const [activeVocabTopic, setActiveVocabTopic] = useState(null);
+  
+  // Scroll position tracking for ReviewScreen
+  const [reviewScrollPosition, setReviewScrollPosition] = useState(0);
+  
+  // Navigation source tracking for breadcrumb-style back navigation
+  const [navigationSource, setNavigationSource] = useState('review');
 
   /**
    * Listen for navigate-to-dashboard events from ErrorBoundary
@@ -144,10 +151,27 @@ export function NavigationProvider({ children }) {
     };
 
     window.addEventListener('navigate-to-dashboard', handleNavigateToDashboard);
-    
+
     return () => {
       window.removeEventListener('navigate-to-dashboard', handleNavigateToDashboard);
     };
+  }, []);
+
+  /**
+   * Splash screen effect
+   * Ensure loading screen shows for at least MIN_LOADING_TIME on initial load
+   */
+  useEffect(() => {
+    // Initial load handling
+    const elapsed = Date.now() - loadingStartTime;
+    const remaining = Math.max(0, MIN_LOADING_TIME - elapsed);
+
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      setLoadingStartTime(null);
+    }, remaining);
+
+    return () => clearTimeout(timer);
   }, []);
 
   /**
@@ -166,7 +190,7 @@ export function NavigationProvider({ children }) {
     if (loadingStartTime) {
       const elapsed = Date.now() - loadingStartTime;
       const remaining = Math.max(0, MIN_LOADING_TIME - elapsed);
-      
+
       setTimeout(() => {
         setIsLoading(false);
         setLoadingStartTime(null);
@@ -200,10 +224,10 @@ export function NavigationProvider({ children }) {
     if (addToHistory && currentScreen !== SCREENS.DASHBOARD) {
       pushToHistory(currentScreen);
     }
-    
+
     // Start loading for lazy-loaded screens
     startLoading();
-    
+
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentScreen(screen);
@@ -324,7 +348,11 @@ export function NavigationProvider({ children }) {
   }, [navigateTo]);
 
   // Vocab drill flow navigation
-  const showVocabDrillIntro = useCallback(() => {
+  const showVocabDrillIntro = useCallback((topic = null, source = 'review') => {
+    if (topic) {
+      setActiveVocabTopic(topic);
+    }
+    setNavigationSource(source);
     navigateTo(SCREENS.VOCAB_DRILL_INTRO);
   }, [navigateTo]);
 
@@ -533,11 +561,14 @@ export function NavigationProvider({ children }) {
     isTransitioning,
     isLoading,
     activeGuidebookId,
-    
+    activeVocabTopic,
+    reviewScrollPosition,
+    navigationSource,
+
     // Loading control
     startLoading,
     endLoading,
-    
+
     // Navigation functions
     showLogin,
     showDashboard,
@@ -549,19 +580,19 @@ export function NavigationProvider({ children }) {
     startActiveCall,
     endCall,
     showReviewScreen,
-    
+
     // Ser/Estar flow
     showSerEstarConcept,
     showSerEstarLogic,
     showSerEstarSpeaking,
-    
+
     // Vocab drill flow
     showVocabDrillIntro,
     showVocabTeachCard,
     showVocabSpeaking,
     showVocabListening,
     showVocabSuccess,
-    
+
     // VIP survival flow
     showVIPSurvivalIntro,
     showVIPTeachShield,
@@ -573,7 +604,7 @@ export function NavigationProvider({ children }) {
     showVIPRoleplay,
     showVIPSuccess,
     showVIPAccessOffer,
-    
+
     // Travel lesson flow
     showTravelImageSelect,
     showTravelTapPair,
@@ -590,16 +621,17 @@ export function NavigationProvider({ children }) {
     showModuleGuidebook,
     showTravelLesson2Intro,
     showVideoLessonM3L3,
-    
+
     // Tab and history navigation
     setActiveTab,
     goBack,
-    
+
     // Helpers
     isFullScreen,
     clearNavigationState,
     navigateTo,
     pushToHistory,
+    setReviewScrollPosition,
   }), [
     currentScreen,
     activeTab,
@@ -607,6 +639,9 @@ export function NavigationProvider({ children }) {
     isTransitioning,
     isLoading,
     activeGuidebookId,
+    activeVocabTopic,
+    reviewScrollPosition,
+    navigationSource,
     startLoading,
     endLoading,
     showLogin,

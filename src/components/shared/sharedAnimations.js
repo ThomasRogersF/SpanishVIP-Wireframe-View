@@ -91,3 +91,96 @@ export const shake = keyframes`
   25% { transform: translateX(-10px); }
   75% { transform: translateX(10px); }
 `;
+
+/**
+ * Slide In Up Animation
+ *
+ * Creates a smooth upward slide-in effect with fade, commonly used for
+ * content appearing during scroll or on page load.
+ *
+ * @description
+ * - Slides up from 20px below while fading in
+ * - Duration typically 0.4s for smooth entrance
+ * - Works well with staggered delays for sequential animations
+ *
+ * @usage
+ * ```jsx
+ * import { slideInUp } from '../shared/sharedAnimations';
+ *
+ * <Box
+ *   sx={{
+ *     animation: `${slideInUp} 0.4s ease-out`,
+ *   }}
+ * >
+ *   {content}
+ * </Box>
+ * ```
+ *
+ * @example
+ * // With staggered delay for list items
+ * {items.map((item, index) => (
+ *   <Box
+ *     key={item.id}
+ *     sx={{
+ *       animation: `${slideInUp} 0.4s ease-out ${index * 0.1}s both`,
+ *     }}
+ *   >
+ *     {item.content}
+ *   </Box>
+ * ))}
+ */
+export const slideInUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+/**
+ * Shimmer Animation
+ *
+ * Creates a shimmering gradient effect for skeleton loading states.
+ *
+ * @description
+ * - Moves background position from -200% to 200%
+ * - Used with linear-gradient backgrounds for shimmer effect
+ * - Duration typically 1.5s for smooth loading animation
+ *
+ * @usage
+ * ```jsx
+ * import { shimmer } from '../shared/sharedAnimations';
+ *
+ * <Box
+ *   sx={{
+ *     background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+ *     backgroundSize: '200% 100%',
+ *     animation: `${shimmer} 1.5s infinite`,
+ *   }}
+ * >
+ *   {skeletonContent}
+ * </Box>
+ * ```
+ *
+ * @example
+ * // Combined with MUI Skeleton component
+ * <Skeleton
+ *   variant="rectangular"
+ *   sx={{
+ *     background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+ *     backgroundSize: '200% 100%',
+ *     animation: `${shimmer} 1.5s infinite`,
+ *   }}
+ * />
+ */
+export const shimmer = keyframes`
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+`;

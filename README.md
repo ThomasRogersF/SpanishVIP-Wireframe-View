@@ -164,9 +164,9 @@ SpanishVIP-Wireframe-View/
 │   │   │   ├── SettingsSelect.jsx
 │   │   │   └── SettingsButton.jsx
 │   │   │
-│   │   ├── Review/             # Review screen components
-│   │   │   ├── MistakeCard.jsx
-│   │   │   └── VocabCard.jsx
+│   │   ├── Review/             # Vocabulary Shelves components
+│   │   │   ├── CategoryShelf.jsx  # Horizontal swimlane container
+│   │   │   └── TopicCard.jsx      # Individual topic cards (120x120px)
 │   │   │
 │   │   ├── Sales/              # Sales/upsell components
 │   │   │   ├── PricingCard.jsx
@@ -443,6 +443,13 @@ Catches JavaScript errors with:
 | `SettingsSelect` | Dropdown selection |
 | `SettingsButton` | Action button |
 
+### Review Components
+
+| Component | Purpose |
+|-----------|---------|
+| `CategoryShelf` | Netflix-style swimlane displaying category metadata and horizontal topic list |
+| `TopicCard` | 120x120px clickable card for vocabulary topics with emoji, title, and progress indicator |
+
 ---
 
 ## Screen Flows
@@ -483,12 +490,12 @@ graph LR
 ### Vocabulary Drill Flow
 ```mermaid
 graph LR
-    DASH[Dashboard] --> INTRO[VocabDrillIntroScreen]
+    REVIEW[ReviewScreen] --> INTRO[VocabDrillIntroScreen]
     INTRO --> TEACH[VocabTeachCardScreen]
     TEACH --> SPEAK[VocabSpeakingScreen]
     SPEAK --> LISTEN[VocabListeningScreen]
     LISTEN --> SUCCESS[VocabSuccessScreen]
-    SUCCESS --> DASH
+    SUCCESS --> REVIEW
 ```
 
 ### VIP Survival Flow

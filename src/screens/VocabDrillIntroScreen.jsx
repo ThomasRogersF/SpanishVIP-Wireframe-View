@@ -17,7 +17,11 @@ import { iosButtonStyle } from '../components/shared/sharedStyles'
  */
 function VocabDrillIntroScreen() {
   // Get navigation functions from context
-  const { showVocabTeachCard, showDashboard } = useNavigation()
+  const { showVocabTeachCard, showReviewScreen, activeVocabTopic } = useNavigation()
+
+  // Fallback if no topic selected (e.g. direct load)
+  const topicTitle = activeVocabTopic?.title || "Vocabulary Drill";
+  const wordsToLearn = activeVocabTopic?.words || [];
 
   return (
     <Box
@@ -38,12 +42,13 @@ function VocabDrillIntroScreen() {
         }}
       >
         <IconButton
-          onClick={showDashboard}
+          onClick={showReviewScreen}
           sx={{
             mr: 2,
             color: '#64748B',
             '&:hover': { bgcolor: '#F1F5F9' },
           }}
+          aria-label="Return to Vocabulary Shelves"
         >
           <ArrowBackIcon />
         </IconButton>
@@ -55,7 +60,7 @@ function VocabDrillIntroScreen() {
             fontFamily: 'Lexend',
           }}
         >
-          Vocabulary Drill
+          {topicTitle}
         </Typography>
       </Box>
 
@@ -67,7 +72,8 @@ function VocabDrillIntroScreen() {
           p: 2,
           display: 'flex',
           flexDirection: 'column',
-          gap: 2,
+          gap: { xs: 1.5, sm: 2 },
+          minHeight: 0,
         }}
       >
         {/* Sofia Welcome Card */}
@@ -76,6 +82,7 @@ function VocabDrillIntroScreen() {
             bgcolor: '#F0FDFA',
             border: '1px solid #CCFBF1',
             borderRadius: '12px',
+            minHeight: '100px',
           }}
         >
           <CardContent>
@@ -90,7 +97,7 @@ function VocabDrillIntroScreen() {
                     mb: 0.5,
                   }}
                 >
-                  Welcome to Vocabulary Drill!
+                  Welcome to {topicTitle}!
                 </Typography>
                 <Typography
                   variant="body2"
@@ -99,7 +106,7 @@ function VocabDrillIntroScreen() {
                     fontSize: '14px',
                   }}
                 >
-                  Learn new words through interactive cards, practice speaking, and test your listening skills.
+                  Learn {wordsToLearn.length} new words through interactive cards, practice speaking, and test your listening skills.
                 </Typography>
               </Box>
             </Box>
@@ -112,6 +119,7 @@ function VocabDrillIntroScreen() {
             bgcolor: '#FEF3C7',
             border: '1px solid #FCD34D',
             borderRadius: '12px',
+            minHeight: '100px',
           }}
         >
           <CardContent>
@@ -142,7 +150,7 @@ function VocabDrillIntroScreen() {
                     fontSize: '14px',
                   }}
                 >
-                  You'll learn 2 new words → Practice speaking → Test your listening
+                  You'll learn {wordsToLearn.length} new words → Practice speaking → Test your listening
                 </Typography>
               </Box>
             </Box>
@@ -162,65 +170,46 @@ function VocabDrillIntroScreen() {
           Words You'll Learn
         </Typography>
 
-        {/* Word 1 Preview */}
-        <Card
-          sx={{
-            borderLeft: '4px solid #14B8A6',
-            bgcolor: '#F0FDFA',
-            borderRadius: '8px',
-          }}
-        >
-          <CardContent>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: '700',
-                color: '#111827',
-                mb: 0.5,
-              }}
-            >
-              🍷 Tinto
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: '#64748B',
-              }}
-            >
-              Red wine
-            </Typography>
-          </CardContent>
-        </Card>
+        {wordsToLearn.map((word, index) => (
+          <Card
+            key={index}
+            sx={{
+              borderLeft: '4px solid #14B8A6',
+              bgcolor: '#F0FDFA',
+              borderRadius: '8px',
+              mb: 1,
+              minHeight: '80px',
+            }}
+          >
+            <CardContent>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: '700',
+                  color: '#111827',
+                  mb: 0.5,
+                }}
+              >
+                {word.emoji} {word.spanish}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#64748B',
+                }}
+              >
+                {word.english}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
 
-        {/* Word 2 Preview */}
-        <Card
-          sx={{
-            borderLeft: '4px solid #14B8A6',
-            bgcolor: '#F0FDFA',
-            borderRadius: '8px',
-          }}
-        >
-          <CardContent>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: '700',
-                color: '#111827',
-                mb: 0.5,
-              }}
-            >
-              🧾 La Cuenta
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: '#64748B',
-              }}
-            >
-              The bill/check
-            </Typography>
-          </CardContent>
-        </Card>
+        {wordsToLearn.length === 0 && (
+          <Typography variant="body2" color="text.secondary">
+            No words loaded for this topic.
+          </Typography>
+        )}
+
       </Box>
 
       {/* Fixed Bottom Section */}
@@ -230,13 +219,33 @@ function VocabDrillIntroScreen() {
           borderTop: '1px solid #E2E8F0',
           p: 2,
           display: 'flex',
+          flexDirection: 'column',
           gap: 2,
         }}
       >
         <Button
           fullWidth
+          variant="text"
+          onClick={showVocabTeachCard}
+          disabled={wordsToLearn.length === 0}
+          sx={{
+            ...iosButtonStyle,
+            color: '#64748B',
+            '&:hover': {
+              backgroundColor: 'rgba(100, 116, 139, 0.08)',
+            },
+            '&:disabled': {
+              color: '#D1D5DB',
+            },
+          }}
+        >
+          Skip to Flashcards
+        </Button>
+        <Button
+          fullWidth
           variant="contained"
           onClick={showVocabTeachCard}
+          disabled={wordsToLearn.length === 0}
           sx={{
             ...iosButtonStyle,
             background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',

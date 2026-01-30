@@ -20,15 +20,31 @@ import { pulseRing } from '../components/shared/sharedAnimations'
  */
 function VocabListeningScreen() {
   // Get navigation functions from context
-  const { showVocabSuccess, showVocabSpeaking } = useNavigation()
+  const { showVocabSuccess, showVocabSpeaking, showReviewScreen, activeVocabTopic } = useNavigation()
 
   const [selectedAnswer, setSelectedAnswer] = useState(null)
   const [showResult, setShowResult] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
 
-  const correctAnswer = 'Tinto'
-  const options = ['Tinto', 'Vino', 'Tinta']
+  // Use dynamic words from topic, or fallback
+  const words = activeVocabTopic?.words || [
+    {
+      spanish: 'Tinto',
+      english: 'Red wine',
+      emoji: '🍷',
+      phonetic: 'TEEN-toh',
+    },
+    {
+      spanish: 'La Cuenta',
+      english: 'The bill/check',
+      emoji: '🧾',
+      phonetic: 'lah KWEN-tah',
+    },
+  ]
+
+  const correctAnswer = words[0]?.spanish || 'Tinto'
+  const options = words.map(w => w.spanish).slice(0, 3)
 
   const handlePlayAudio = () => {
     setIsPlaying(true)
@@ -86,30 +102,68 @@ function VocabListeningScreen() {
         sx={{
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           p: 2,
           borderBottom: '1px solid #E2E8F0',
         }}
       >
-        <IconButton
-          onClick={showVocabSpeaking}
+        <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+          <IconButton
+            onClick={showVocabSpeaking}
+            sx={{
+              mr: 2,
+              color: '#64748B',
+              '&:hover': { bgcolor: '#F1F5F9' },
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {activeVocabTopic?.emoji && (
+                <Typography sx={{ fontSize: '20px' }}>
+                  {activeVocabTopic.emoji}
+                </Typography>
+              )}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: '700',
+                  color: '#111827',
+                  fontFamily: 'Lexend',
+                }}
+              >
+                {activeVocabTopic?.title || 'Listening Challenge'}
+              </Typography>
+            </Box>
+            {activeVocabTopic?.level_label && (
+              <Typography
+                variant="caption"
+                sx={{
+                  color: '#64748B',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                }}
+              >
+                {activeVocabTopic.level_label}
+              </Typography>
+            )}
+          </Box>
+        </Box>
+        <Button
+          onClick={showReviewScreen}
           sx={{
-            mr: 2,
             color: '#64748B',
-            '&:hover': { bgcolor: '#F1F5F9' },
+            fontWeight: '600',
+            fontSize: '14px',
+            textTransform: 'none',
+            '&:hover': {
+              bgcolor: '#F1F5F9',
+            },
           }}
         >
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: '700',
-            color: '#111827',
-            fontFamily: 'Lexend',
-          }}
-        >
-          Listening Challenge
-        </Typography>
+          Back to Shelves
+        </Button>
       </Box>
 
       {/* Main Content */}

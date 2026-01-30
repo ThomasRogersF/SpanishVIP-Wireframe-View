@@ -9,7 +9,21 @@ import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Chip from '@mui/material/Chip'
+import { keyframes } from '@mui/material/styles'
 import { iosButtonStyle } from '../shared/sharedStyles.js'
+
+// Define glow animation
+const glowAnimation = keyframes`
+  0% {
+    box-shadow: 0 0 5px rgba(251, 191, 36, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(251, 191, 36, 0.2);
+  }
+`
 
 /**
  * ModuleList - Curriculum module list with expandable lessons
@@ -39,25 +53,38 @@ function ModuleList({
 
   // Module 1 lessons data - matches original HTML: "Module 1: Greetings & Basics" (7 Lessons)
   const module1Lessons = [
+    { id: 8, title: '📖 Module 1 Guidebook', subtitle: 'Recommended Reference • Always Available', status: 'ready', isRecommended: true, onClick: () => onModuleGuidebookClick('guide_m1') },
     { id: 1, title: 'L1: The Alphabet & Ñ', subtitle: 'Completed • 8 min', status: 'completed' },
     { id: 2, title: 'L2: The Secret Vowels', subtitle: 'Completed • 6 min', status: 'completed' },
     { id: 3, title: 'L3: Essential Greetings', subtitle: 'Ready • 12 min', status: 'next' },
     { id: 4, title: 'L4: The VIP Survival Phrases', subtitle: 'Ready • 10 min', status: 'ready', onClick: onVIPSurvivalClick },
     { id: 5, title: 'L5: Subject Pronouns', subtitle: 'Locked • 15 min', status: 'locked' },
     { id: 6, title: 'L6: I am... (Intro to Ser)', subtitle: 'Locked • 18 min', status: 'locked' },
-    { id: 7, title: 'L7: Module 1 Exam', subtitle: 'Locked • 25 min', status: 'locked' },
-    { id: 8, title: '📖 Module 1 Guidebook', subtitle: 'Reference • Always Available', status: 'ready', onClick: () => onModuleGuidebookClick('guide_b1_u01') }
+    { id: 7, title: 'L7: Module 1 Exam', subtitle: 'Locked • 25 min', status: 'locked' }
   ]
 
   // Module 2 lessons data - matches original HTML: "Module 2: Cafe Culture" (Active)
   const module2Lessons = [
+    { id: 6, title: '📖 Module 2 Guidebook', subtitle: 'Recommended Reference • Always Available', status: 'ready', isRecommended: true, onClick: () => onModuleGuidebookClick('guide_m2') },
     { id: 1, title: 'L1: Intro to Politeness', subtitle: 'Completed', status: 'completed' },
     { id: 2, title: 'L2: Vocabulary Drill', subtitle: 'Completed', status: 'completed', onClick: onVocabDrillClick },
     { id: 3, title: 'L3: Grammar - Ser vs Estar', subtitle: 'Completed', status: 'completed', onClick: onSerEstarClick },
     { id: 4, title: 'L4: Roleplay - The Cafe', subtitle: 'In Progress - 60%', status: 'active' },
-    { id: 5, title: 'L5: Unit Exam', subtitle: 'Locked', status: 'locked' },
-    { id: 6, title: '📖 Module 2 Guidebook', subtitle: 'Reference • Always Available', status: 'ready', onClick: () => onModuleGuidebookClick('guide_b1_u01') }
+    { id: 5, title: 'L5: Unit Exam', subtitle: 'Locked', status: 'locked' }
   ]
+
+  // Glow animation for recommended items
+  const glowAnimation = keyframes`
+    0% {
+      box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(251, 191, 36, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+    }
+  `
 
   // Render status icon based on lesson status
   const renderStatusIcon = (status) => {
@@ -216,6 +243,14 @@ function ModuleList({
             mx: -1,
             px: 1,
             borderRadius: '12px'
+          }),
+          ...(lesson.isRecommended && {
+            background: 'linear-gradient(90deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%)',
+            border: '2px solid #FBBF24',
+            borderRadius: '12px',
+            mx: -1,
+            px: 1,
+            animation: `${glowAnimation} 2s infinite ease-in-out`
           })
         }}
       >
@@ -250,6 +285,22 @@ function ModuleList({
                   }}
                 />
               )}
+              {lesson.isRecommended && (
+                <Chip
+                  label="RECOMMENDED"
+                  size="small"
+                  sx={{
+                    height: 20,
+                    fontSize: '0.625rem',
+                    fontWeight: 700,
+                    backgroundColor: '#FBBF24',
+                    color: '#FFFFFF',
+                    '& .MuiChip-label': {
+                      px: 1
+                    }
+                  }}
+                />
+              )}
             </Box>
           }
           secondary={
@@ -257,7 +308,7 @@ function ModuleList({
               variant="body2"
               sx={{
                 fontSize: '0.75rem',
-                color: getTextColor(lesson.status),
+                color: lesson.isRecommended ? '#D97706' : getTextColor(lesson.status),
                 fontWeight: lesson.status === 'next' || lesson.status === 'active' ? 500 : 400,
                 mt: 0.25
               }}
@@ -309,6 +360,7 @@ function ModuleList({
 
   // Module 3 lessons data - Travel Essentials (Active)
   const module3Lessons = [
+    { id: 4, title: '📖 Module 3 Guidebook', subtitle: 'Recommended Reference • Always Available', status: 'ready', isRecommended: true, onClick: () => onModuleGuidebookClick('guide_m3') },
     {
       id: 1,
       title: 'L1: Vamos a Viajar',
@@ -329,8 +381,7 @@ function ModuleList({
       subtitle: 'Ready • 15 min',
       status: 'ready',
       onClick: onVideoLessonM3L3Click
-    },
-    { id: 4, title: '📖 Module 3 Guidebook', subtitle: 'Reference • Always Available', status: 'ready', onClick: () => onModuleGuidebookClick('guide_b1_u01') }
+    }
   ]
 
   // Render active Module 3 component

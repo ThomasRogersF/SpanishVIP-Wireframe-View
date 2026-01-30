@@ -2,8 +2,6 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import { keyframes } from '@mui/system'
-import SofiaAvatar from './SofiaAvatar.jsx'
-
 // Fade in animation with delay to avoid flash for fast loads
 const fadeIn = keyframes`
   from {
@@ -40,7 +38,15 @@ function LoadingScreen({ message = 'Loading...' }) {
         bgcolor: 'background.default'
       }}
     >
-      <SofiaAvatar size="small" emoji="✨" showGradientBorder={true} />
+      <img
+        src="/brand/spanishvip_logo.png"
+        alt="SpanishVIP"
+        style={{
+          width: '180px',
+          height: 'auto',
+          marginBottom: '16px'
+        }}
+      />
       <CircularProgress
         color="primary"
         size={40}
