@@ -45,8 +45,40 @@ function ModuleList({
   onGrammarGuideClick,
   onVideoLessonM3L3Click,
   onModuleGuidebookClick,
-  showLockedModule = true
+  showLockedModule = true,
+  level = 'A0'
 }) {
+  // If not A0, show "Work in Progress" state
+  if (level !== 'A0') {
+    return (
+      <Box sx={{ mt: 3 }}>
+        <Typography variant="h6" sx={{ fontFamily: "'Lexend', sans-serif", fontWeight: 700, mb: 2, color: '#111827' }}>
+          Level {level} Curriculum
+        </Typography>
+        {[1, 2, 3].map(i => (
+          <Box key={i} sx={{
+            mb: 2,
+            p: 2,
+            border: '1px dashed #D1D5DB',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            opacity: 0.7
+          }}>
+            <Box sx={{ width: 40, height: 40, borderRadius: '8px', bgcolor: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography sx={{ fontSize: '20px' }}>🚧</Typography>
+            </Box>
+            <Box>
+              <Typography sx={{ fontWeight: 600, color: '#9CA3AF' }}>Module {i}: Coming Soon</Typography>
+              <Typography variant="caption" sx={{ color: '#9CA3AF' }}>Curriculum under construction</Typography>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    )
+  }
+
   const [module1Expanded, setModule1Expanded] = useState(false)
   const [module2Expanded, setModule2Expanded] = useState(false)
   const [module3Expanded, setModule3Expanded] = useState(false)

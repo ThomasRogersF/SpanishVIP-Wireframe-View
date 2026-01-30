@@ -1,4 +1,6 @@
 import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import useSDKConfig from '../hooks/useSDKConfig.js'
 import { useNavigation } from '../hooks/useNavigation.js'
 
@@ -24,7 +26,7 @@ import UpsellBanner from '../components/Dashboard/UpsellBanner.jsx'
 function DashboardScreen() {
   // Get SDK configuration from context
   const config = useSDKConfig()
-  
+
   // Get navigation functions from context
   const {
     showLessonRunner,
@@ -38,7 +40,9 @@ function DashboardScreen() {
     showGrammarGuide,
     showModuleGuidebook,
     showVideoLessonM3L3,
-    setActiveTab
+    setActiveTab,
+    level,
+    showLevelSelection
   } = useNavigation()
 
   // Navigation Handlers - using navigation context
@@ -137,6 +141,37 @@ function DashboardScreen() {
         minHeight: '100%'
       }}
     >
+      {/* Welcome Header */}
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 700, fontFamily: "'Lexend', sans-serif", color: '#111827' }}>
+            Bienvenido User
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#6B7280' }}>
+            Let's learn Spanish!
+          </Typography>
+        </Box>
+        <Button
+          onClick={showLevelSelection}
+          variant="contained"
+          size="small"
+          sx={{
+            borderRadius: '20px',
+            textTransform: 'none',
+            fontWeight: 700,
+            fontSize: '0.875rem',
+            background: 'linear-gradient(135deg, #FACC15 0%, #CA8A04 100%)',
+            boxShadow: '0 4px 6px -1px rgba(250, 204, 21, 0.3)',
+            color: '#FFFFFF',
+            minWidth: 'auto',
+            px: 2,
+            py: 0.5
+          }}
+        >
+          Level {level}
+        </Button>
+      </Box>
+
       {/* Hero Card - Main lesson progress */}
       <HeroCard
         headline={config.hero_headline}
@@ -169,6 +204,7 @@ function DashboardScreen() {
         onVideoLessonM3L3Click={handleVideoLessonM3L3}
         onModuleGuidebookClick={handleModuleGuidebook}
         showLockedModule={false}
+        level={level}
       />
 
       {/* Upsell Banner - Human tutor booking */}
