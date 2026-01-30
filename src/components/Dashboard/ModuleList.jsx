@@ -353,6 +353,15 @@ function ModuleList({
     )
   }
 
+  // Coming Soon modules data for A0
+  const comingSoonModules = [
+    { id: 4, title: 'Module 4: Shopping & Directions', subtitle: 'Coming Soon', emoji: '🛍️' },
+    { id: 5, title: 'Module 5: Food & Dining', subtitle: 'Coming Soon', emoji: '🍽️' },
+    { id: 6, title: 'Module 6: Time & Weather', subtitle: 'Coming Soon', emoji: '⏰' },
+    { id: 7, title: 'Module 7: Family & Descriptions', subtitle: 'Coming Soon', emoji: '👨‍👩‍👧' },
+    { id: 8, title: 'Module 8: Daily Routines', subtitle: 'Coming Soon', emoji: '🌅' }
+  ]
+
   // Render locked Module 3 component
   const renderLockedModule3 = () => (
     <Box
@@ -386,6 +395,60 @@ function ModuleList({
             Unlocks at Level A1
           </Typography>
         </Box>
+      </Box>
+    </Box>
+  )
+
+  // Render coming soon module
+  const renderComingSoonModule = (module) => (
+    <Box
+      key={module.id}
+      sx={{
+        border: '1px dashed #D1D5DB',
+        borderRadius: '16px',
+        p: 2.5,
+        opacity: 0.7,
+        mb: 2,
+        backgroundColor: 'rgba(243, 244, 246, 0.5)'
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: '8px',
+            backgroundColor: '#F3F4F6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px'
+          }}
+        >
+          {module.emoji}
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <Typography sx={{ fontWeight: 600, fontSize: '1rem', color: '#9CA3AF' }}>
+            {module.title}
+          </Typography>
+          <Typography sx={{ fontSize: '0.75rem', color: '#9CA3AF' }}>
+            {module.subtitle}
+          </Typography>
+        </Box>
+        <Chip
+          label="SOON"
+          size="small"
+          sx={{
+            height: 22,
+            fontSize: '0.625rem',
+            fontWeight: 700,
+            backgroundColor: '#E5E7EB',
+            color: '#6B7280',
+            '& .MuiChip-label': {
+              px: 1
+            }
+          }}
+        />
       </Box>
     </Box>
   )
@@ -655,6 +718,36 @@ function ModuleList({
 
       {/* Module 3 - Travel Essentials - Conditionally rendered */}
       {showLockedModule ? renderLockedModule3() : renderActiveModule3()}
+
+      {/* Coming Soon Modules - Only show for A0 */}
+      <Box sx={{ mt: 3 }}>
+        <Typography
+          variant="subtitle2"
+          sx={{
+            fontFamily: "'Lexend', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            color: '#6B7280',
+            mb: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}
+        >
+          <Box
+            component="span"
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: '#FBBF24',
+              display: 'inline-block'
+            }}
+          />
+          Coming Next in A0
+        </Typography>
+        {comingSoonModules.map(module => renderComingSoonModule(module))}
+      </Box>
     </Box>
   )
 }

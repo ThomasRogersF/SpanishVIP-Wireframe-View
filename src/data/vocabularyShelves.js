@@ -422,8 +422,10 @@ const CATEGORY_TEMPLATE = [
 ];
 
 // ============================================
-// PAGINATION SIMULATOR
+// EXPORTS
 // ============================================
+
+export { CATEGORY_TEMPLATE }
 
 export const fetchVocabularyShelves = async (page = 1, limit = 20) => {
   // Simulate network delay

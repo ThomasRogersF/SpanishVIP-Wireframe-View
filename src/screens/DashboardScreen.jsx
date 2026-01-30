@@ -8,7 +8,7 @@ import { useNavigation } from '../hooks/useNavigation.js'
 import HeroCard from '../components/Dashboard/HeroCard.jsx'
 import QuickWinCard from '../components/Dashboard/QuickWinCard.jsx'
 import ModuleList from '../components/Dashboard/ModuleList.jsx'
-import UpsellBanner from '../components/Dashboard/UpsellBanner.jsx'
+import DraggableFloatingCTA from '../components/Dashboard/DraggableFloatingCTA.jsx'
 
 /**
  * DashboardScreen - Main hub of the SpanishVIP app
@@ -207,9 +207,9 @@ function DashboardScreen() {
         level={level}
       />
 
-      {/* Upsell Banner - Human tutor booking */}
-      <Box sx={{ mb: 3 }}>
-        <UpsellBanner
+      {/* Draggable Floating CTA - Human tutor booking */}
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <DraggableFloatingCTA
           upsellText={config.upsell_text}
           actionText={config.upsell_action}
           onBookClick={handleVIPAccessOffer}
