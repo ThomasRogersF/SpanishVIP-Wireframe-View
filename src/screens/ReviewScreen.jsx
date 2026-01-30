@@ -1,118 +1,177 @@
-import React, { useState } from 'react';
-import { Box, Typography, Tabs, Tab, IconButton } from '@mui/material';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Box, Typography, IconButton, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import MistakeCard from '../components/Review/MistakeCard';
-import VocabCard from '../components/Review/VocabCard';
 import { useNavigation } from '../hooks/useNavigation.js';
+import CategoryShelf from '../components/Review/CategoryShelf';
+import { CategoryShelfSkeleton } from '../components/Review/SkeletonComponents';
+import EmptyState from '../components/Review/EmptyState';
+import OnboardingTooltip, { useOnboardingSeen } from '../components/Review/OnboardingTooltip';
+import { fetchVocabularyShelves } from '../data/vocabularyShelves';
+import { keyframes } from '@mui/system';
+
+// Fade in animation for smooth content transitions
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
 /**
- * TabPanel component for conditional content rendering
- * @param {object} props - Component props
- * @param {React.ReactNode} props.children - Content to render
- * @param {number} props.value - Current active tab index
- * @param {number} props.index - This panel's tab index
- */
-const TabPanel = ({ children, value, index }) => {
-  return (
-    <Box
-      role="tabpanel"
-      hidden={value !== index}
-      sx={{ mt: 2 }}
-    >
-      {value === index && children}
-    </Box>
-  );
-};
-
-// Sample data for Mistakes tab
-const mistakesData = [
-  {
-    id: 1,
-    type: 'grammar',
-    icon: '⚠️',
-    wrongText: 'Yo quiero',
-    correctText: 'Me regala',
-    explanation: 'Use "Me regala" for polite requests in Colombia',
-  },
-  {
-    id: 2,
-    type: 'spelling',
-    icon: '✏️',
-    word: 'Avión',
-    explanation: 'Remember the accent mark!',
-  },
-  {
-    id: 3,
-    type: 'pronunciation',
-    icon: '🔊',
-    word: 'Gracias',
-    phonetic: 'GRAH-see-ahs',
-    correction: 'Not "GRAH-shee-ahs"',
-    explanation: 'The "c" before "i" sounds like "s" in Latin American Spanish',
-  },
-];
-
-// Sample data for Vocabulary tab
-const vocabularyData = [
-  {
-    id: 1,
-    emoji: '☕',
-    category: 'Food & Drink',
-    word: 'Tinto',
-    translation: 'Black coffee (Colombia)',
-  },
-  {
-    id: 2,
-    emoji: '🍞',
-    category: 'Food & Drink',
-    word: 'Pan',
-    translation: 'Bread',
-  },
-  {
-    id: 3,
-    emoji: '💬',
-    category: 'Phrases',
-    word: 'Por favor',
-    translation: 'Please',
-  },
-];
-
-/**
- * ReviewScreen component - Main container with Mistakes and Vocabulary tabs
- * Uses useNavigation hook for navigation - no props required
+ * ReviewScreen (Vocabulary Shelves)
+ * A Netflix-style discovery screen for vocabulary.
+ * Features nested lists: Vertical Categories -> Horizontal Items.
+ * Includes scroll position preservation for seamless navigation.
  */
 const ReviewScreen = () => {
-  // Get navigation functions from context
-  const { showDashboard } = useNavigation();
+  const { showDashboard, showVocabDrillIntro, reviewScrollPosition, setReviewScrollPosition } = useNavigation();
 
-  const [activeTab, setActiveTab] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
+  // Check if onboarding has been seen
+  const onboardingSeen = useOnboardingSeen();
+
+  // Show onboarding tooltip for first-time users
+  useEffect(() => {
+    if (!onboardingSeen && initialLoadComplete && categories.length > 0) {
+      setShowOnboarding(true);
+    }
+  }, [onboardingSeen, initialLoadComplete, categories.length]);
+
+  // Ref for the scrollable container
+  const scrollContainerRef = useRef(null);
+
+  // Find the parent scrollable container (AppLayout's Box)
+  useEffect(() => {
+    const findScrollContainer = (element) => {
+      let parent = element?.parentElement;
+      while (parent) {
+        const overflow = window.getComputedStyle(parent).overflow;
+        if (overflow === 'auto' || overflow === 'scroll') {
+          return parent;
+        }
+        parent = parent.parentElement;
+      }
+      return null;
+    };
+    
+    // Set the scroll container ref after component mounts
+    if (scrollContainerRef.current) {
+      const scrollContainer = findScrollContainer(scrollContainerRef.current);
+      if (scrollContainer) {
+        scrollContainerRef.current = scrollContainer;
+      }
+    }
+  }, []);
+
+  // Restore scroll position on mount
+  useEffect(() => {
+    if (scrollContainerRef.current && reviewScrollPosition > 0) {
+      scrollContainerRef.current.scrollTop = reviewScrollPosition;
+    }
+  }, [reviewScrollPosition]);
+
+  // Handle scroll events to save position
+  const handleScroll = useCallback((e) => {
+    setReviewScrollPosition(e.target.scrollTop);
+  }, [setReviewScrollPosition]);
+
+  // Attach scroll event listener to parent scroll container
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+      return () => {
+        scrollContainer.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [handleScroll]);
+
+  const handleTopicClick = (topic) => {
+    console.log("Navigating to drill for topic:", topic.title);
+    showVocabDrillIntro(topic);
   };
 
-  const handleFixClick = (mistakeId) => {
-    console.log('Fix clicked for mistake:', mistakeId);
-    // Placeholder for future implementation
-  };
+  // Ref for intersection observer
+  const observer = useRef();
 
-  const handlePracticeClick = (vocabId) => {
-    console.log('Practice clicked for vocab:', vocabId);
-    // Placeholder for future implementation
+  // Last element ref callback for infinite scrolling
+  const lastCategoryElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prevPage => prevPage + 1);
+      }
+    });
+
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
+
+  // Data fetching
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchVocabularyShelves(page);
+        setCategories(prev => {
+          // Avoid duplicates if strict mode causes double render
+          const newCats = data.categories.filter(alertCat =>
+            !prev.find(p => p.id === alertCat.id)
+          );
+          return [...prev, ...newCats];
+        });
+        setHasMore(page < data.total_pages);
+        
+        // Announce new categories loaded for screen readers
+        if (page > 1 && data.categories.length > 0) {
+          const announcement = `Loaded ${data.categories.length} more vocabulary shelves`;
+          // Use a live region for screen reader announcements
+          const liveRegion = document.getElementById('sr-announcements');
+          if (liveRegion) {
+            liveRegion.textContent = announcement;
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load vocabulary shelves", error);
+      } finally {
+        setLoading(false);
+        if (page === 1) {
+          setInitialLoadComplete(true);
+        }
+      }
+    };
+
+    loadData();
+  }, [page]);
+
+  const handleOnboardingDismiss = () => {
+    setShowOnboarding(false);
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#F8F9FA', position: 'relative' }}>
       {/* Header Section */}
       <Box
         sx={{
-          px: 2.5,
-          py: 3,
-          borderBottom: '1px solid',
-          borderColor: 'grey.200',
+          px: { xs: 2, sm: 2.5 },
+          py: 2,
           display: 'flex',
           alignItems: 'center',
           gap: 1,
+          bgcolor: 'background.paper',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          boxShadow: '0px 2px 4px rgba(0,0,0,0.05)'
         }}
       >
         <IconButton
@@ -125,111 +184,140 @@ const ReviewScreen = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" sx={{ fontWeight: 700 }}>
-          Smart Review
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          Vocabulary Shelves
         </Typography>
       </Box>
 
-      {/* Tab Container */}
-      <Box sx={{ px: 2.5, py: 2 }}>
-        <Box
-          sx={{
-            bgcolor: 'grey.100',
-            borderRadius: 6,
-            p: 0.5,
-          }}
-        >
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            variant="fullWidth"
-            TabIndicatorProps={{ style: { display: 'none' } }}
-          >
-            <Tab
-              label="Mistakes"
-              sx={{
-                borderRadius: 6,
-                fontWeight: 600,
-                fontSize: '0.875rem',
-                textTransform: 'none',
-                minHeight: 40,
-                bgcolor: activeTab === 0 ? 'white' : 'transparent',
-                color: activeTab === 0 ? 'secondary.main' : 'text.secondary',
-                boxShadow: activeTab === 0 ? 1 : 0,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  bgcolor: activeTab === 0 ? 'white' : 'grey.200',
-                },
-              }}
-            />
-            <Tab
-              label="Vocabulary"
-              sx={{
-                borderRadius: 6,
-                fontWeight: 600,
-                fontSize: '0.875rem',
-                textTransform: 'none',
-                minHeight: 40,
-                bgcolor: activeTab === 1 ? 'white' : 'transparent',
-                color: activeTab === 1 ? 'secondary.main' : 'text.secondary',
-                boxShadow: activeTab === 1 ? 1 : 0,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  bgcolor: activeTab === 1 ? 'white' : 'grey.200',
-                },
-              }}
-            />
-          </Tabs>
-        </Box>
-      </Box>
-
-      {/* Content Area */}
+      {/* Main Content (Vertical Scroll) */}
       <Box
+        ref={scrollContainerRef}
+        role="main"
+        aria-label="Vocabulary shelves, scroll to explore categories"
         sx={{
-          px: 2.5,
-          pb: 12,
-          overflow: 'auto',
           flex: 1,
+          pt: 3,
+          pb: { xs: 12, sm: 10 }, // Padding for bottom nav/safe area
         }}
       >
-        {/* Mistakes Tab Panel */}
-        <TabPanel value={activeTab} index={0}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {mistakesData.map((mistake) => (
-              <MistakeCard
-                key={mistake.id}
-                type={mistake.type}
-                icon={mistake.icon}
-                wrongText={mistake.wrongText}
-                correctText={mistake.correctText}
-                word={mistake.word}
-                phonetic={mistake.phonetic}
-                correction={mistake.correction}
-                explanation={mistake.explanation}
-                onFixClick={() => handleFixClick(mistake.id)}
-              />
+        {/* Screen reader announcements region */}
+        <Box
+          id="sr-announcements"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          sx={{
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            padding: 0,
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        />
+        {/* Show skeleton loaders during initial load */}
+        {page === 1 && loading && !initialLoadComplete && (
+          <Box sx={{ animation: `${fadeIn} 0.3s ease-out` }}>
+            {[1, 2, 3].map((index) => (
+              <CategoryShelfSkeleton key={index} />
             ))}
           </Box>
-        </TabPanel>
+        )}
 
-        {/* Vocabulary Tab Panel */}
-        <TabPanel value={activeTab} index={1}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {vocabularyData.map((vocab) => (
-              <VocabCard
-                key={vocab.id}
-                emoji={vocab.emoji}
-                category={vocab.category}
-                word={vocab.word}
-                translation={vocab.translation}
-                onPracticeClick={() => handlePracticeClick(vocab.id)}
+        {/* Show categories after initial load */}
+        {categories.map((category, index) => {
+          if (categories.length === index + 1) {
+            return (
+              <Box ref={lastCategoryElementRef} key={category.id}>
+                <CategoryShelf
+                  title={category.title}
+                  levelLabel={category.level_label}
+                  description={category.description}
+                  items={category.items}
+                  onTopicClick={handleTopicClick}
+                  index={index}
+                />
+              </Box>
+            );
+          } else {
+            return (
+              <CategoryShelf
+                key={category.id}
+                title={category.title}
+                levelLabel={category.level_label}
+                description={category.description}
+                items={category.items}
+                onTopicClick={handleTopicClick}
+                index={index}
               />
+            );
+          }
+        })}
+
+        {/* Show skeleton loaders for pagination loading (subsequent pages) */}
+        {loading && initialLoadComplete && (
+          <Box
+            sx={{ p: 3 }}
+            role="status"
+            aria-live="polite"
+            aria-label="Loading more vocabulary shelves"
+          >
+            {[1, 2].map((index) => (
+              <CategoryShelfSkeleton key={index} />
             ))}
           </Box>
-        </TabPanel>
+        )}
+
+        {/* Empty state when no categories exist */}
+        {initialLoadComplete && categories.length === 0 && !loading && !hasMore && (
+          <EmptyState
+            icon="📚"
+            title="No vocabulary shelves yet"
+            description="Check back soon for new content!"
+          />
+        )}
+
+        {/* End of shelves message */}
+        {!hasMore && !loading && categories.length > 0 && (
+          <Box
+            sx={{
+              py: 4,
+              px: 3,
+              textAlign: 'center',
+            }}
+            role="status"
+            aria-live="polite"
+          >
+            <Typography variant="h5" sx={{ mb: 1, fontWeight: 600 }}>
+              🎉
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mb: 1 }}
+            >
+              You've reached the end of the shelves!
+            </Typography>
+            <Typography
+              variant="caption"
+              color="text.disabled"
+            >
+              Check back soon for more vocabulary to learn
+            </Typography>
+          </Box>
+        )}
       </Box>
+
+      {/* Onboarding Tooltip */}
+      <OnboardingTooltip
+        show={showOnboarding}
+        onDismiss={handleOnboardingDismiss}
+      />
     </Box>
   );
 };
 
 export default ReviewScreen;
+

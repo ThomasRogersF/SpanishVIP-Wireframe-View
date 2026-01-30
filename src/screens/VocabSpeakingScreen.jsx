@@ -19,14 +19,15 @@ import { iosButtonStyle } from '../components/shared/sharedStyles'
  */
 function VocabSpeakingScreen() {
   // Get navigation functions from context
-  const { showVocabListening, showVocabTeachCard } = useNavigation()
+  const { showVocabListening, showVocabTeachCard, showReviewScreen, activeVocabTopic } = useNavigation()
 
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackType, setFeedbackType] = useState('success')
   const { isRecording, startRecording, stopRecording } = useRecording()
 
-  const words = [
+  // Use dynamic words from topic, or fallback
+  const words = activeVocabTopic?.words || [
     {
       spanish: 'Tinto',
       english: 'Red wine',
@@ -86,7 +87,7 @@ function VocabSpeakingScreen() {
           borderBottom: '1px solid #E2E8F0',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
           <IconButton
             onClick={showVocabTeachCard}
             sx={{
@@ -97,26 +98,63 @@ function VocabSpeakingScreen() {
           >
             <ArrowBackIcon />
           </IconButton>
-          <Typography
-            variant="h6"
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {activeVocabTopic?.emoji && (
+                <Typography sx={{ fontSize: '20px' }}>
+                  {activeVocabTopic.emoji}
+                </Typography>
+              )}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: '700',
+                  color: '#111827',
+                  fontFamily: 'Lexend',
+                }}
+              >
+                {activeVocabTopic?.title || 'Practice Speaking'}
+              </Typography>
+            </Box>
+            {activeVocabTopic?.level_label && (
+              <Typography
+                variant="caption"
+                sx={{
+                  color: '#64748B',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                }}
+              >
+                {activeVocabTopic.level_label}
+              </Typography>
+            )}
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Button
+            onClick={showReviewScreen}
             sx={{
-              fontWeight: '700',
-              color: '#111827',
-              fontFamily: 'Lexend',
+              color: '#64748B',
+              fontWeight: '600',
+              fontSize: '14px',
+              textTransform: 'none',
+              '&:hover': {
+                bgcolor: '#F1F5F9',
+              },
             }}
           >
-            Practice Speaking
+            Back to Shelves
+          </Button>
+          <Typography
+            variant="body2"
+            sx={{
+              color: '#64748B',
+              fontWeight: '600',
+            }}
+          >
+            Word {currentWordIndex + 1} of {words.length}
           </Typography>
         </Box>
-        <Typography
-          variant="body2"
-          sx={{
-            color: '#64748B',
-            fontWeight: '600',
-          }}
-        >
-          Word {currentWordIndex + 1} of 2
-        </Typography>
       </Box>
 
       {/* Main Content */}
