@@ -84,9 +84,29 @@ function DashboardScreen() {
 
   /**
    * Navigate to Vocab Drill intro (Module 2, L2)
+   * Provides a default quick drill topic with essential vocabulary
    */
   const handleVocabDrill = () => {
-    showVocabDrillIntro()
+    // Default 2-minute vocab drill topic with essential words
+    const quickDrillTopic = {
+      id: 'quick-drill-essentials',
+      title: 'Essential Phrases',
+      subtitle: '2-Minute Quick Drill',
+      emoji: '⚡',
+      level: 'A1',
+      words: [
+        { spanish: "Hola", english: "Hello", emoji: "👋", phonetic: "OH-lah", context: "Hola, ¿cómo estás?" },
+        { spanish: "Gracias", english: "Thank you", emoji: "🙏", phonetic: "GRAH-see-ahs", context: "Gracias por tu ayuda." },
+        { spanish: "Por favor", english: "Please", emoji: "🙏", phonetic: "pohr fah-BOHR", context: "Un café, por favor." },
+        { spanish: "Lo siento", english: "I'm sorry", emoji: "😔", phonetic: "loh see-EHN-toh", context: "Lo siento, no entiendo." },
+        { spanish: "Perdón", english: "Excuse me", emoji: "🙋", phonetic: "pehr-DOHN", context: "Perdón, ¿dónde está el baño?" },
+        { spanish: "Sí", english: "Yes", emoji: "✅", phonetic: "see", context: "Sí, me gusta." },
+        { spanish: "No", english: "No", emoji: "❌", phonetic: "noh", context: "No, gracias." },
+        { spanish: "Buenos días", english: "Good morning", emoji: "🌅", phonetic: "BWEH-nohs DEE-ahs", context: "Buenos días, señora." }
+      ]
+    };
+    
+    showVocabDrillIntro(quickDrillTopic, 'dashboard');
   }
 
   /**

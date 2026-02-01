@@ -99,7 +99,33 @@ function ModuleList({
   const module2Lessons = [
     { id: 6, title: '📖 Module 2 Guidebook', subtitle: 'Recommended Reference • Always Available', status: 'ready', isRecommended: true, onClick: () => onModuleGuidebookClick('guide_m2') },
     { id: 1, title: 'L1: Intro to Politeness', subtitle: 'Completed', status: 'completed' },
-    { id: 2, title: 'L2: Vocabulary Drill', subtitle: 'Completed', status: 'completed', onClick: onVocabDrillClick },
+    {
+      id: 2,
+      title: 'L2: Vocabulary Drill',
+      subtitle: 'Completed',
+      status: 'completed',
+      onClick: () => {
+        // Provide the same quick drill topic for Module 2, L2
+        const quickDrillTopic = {
+          id: 'quick-drill-essentials',
+          title: 'Essential Phrases',
+          subtitle: '2-Minute Quick Drill',
+          emoji: '⚡',
+          level: 'A1',
+          words: [
+            { spanish: "Hola", english: "Hello", emoji: "👋", phonetic: "OH-lah", context: "Hola, ¿cómo estás?" },
+            { spanish: "Gracias", english: "Thank you", emoji: "🙏", phonetic: "GRAH-see-ahs", context: "Gracias por tu ayuda." },
+            { spanish: "Por favor", english: "Please", emoji: "🙏", phonetic: "pohr fah-BOHR", context: "Un café, por favor." },
+            { spanish: "Lo siento", english: "I'm sorry", emoji: "😔", phonetic: "loh see-EHN-toh", context: "Lo siento, no entiendo." },
+            { spanish: "Perdón", english: "Excuse me", emoji: "🙋", phonetic: "pehr-DOHN", context: "Perdón, ¿dónde está el baño?" },
+            { spanish: "Sí", english: "Yes", emoji: "✅", phonetic: "see", context: "Sí, me gusta." },
+            { spanish: "No", english: "No", emoji: "❌", phonetic: "noh", context: "No, gracias." },
+            { spanish: "Buenos días", english: "Good morning", emoji: "🌅", phonetic: "BWEH-nohs DEE-ahs", context: "Buenos días, señora." }
+          ]
+        };
+        onVocabDrillClick(quickDrillTopic, 'module');
+      }
+    },
     { id: 3, title: 'L3: Grammar - Ser vs Estar', subtitle: 'Completed', status: 'completed', onClick: onSerEstarClick },
     { id: 4, title: 'L4: Roleplay - The Cafe', subtitle: 'In Progress - 60%', status: 'active' },
     { id: 5, title: 'L5: Unit Exam', subtitle: 'Locked', status: 'locked' }
