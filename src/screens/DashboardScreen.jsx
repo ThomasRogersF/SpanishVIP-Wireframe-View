@@ -40,6 +40,7 @@ function DashboardScreen() {
     showGrammarGuide,
     showModuleGuidebook,
     showVideoLessonM3L3,
+    showVoiceConversation,
     setActiveTab,
     level,
     showLevelSelection
@@ -223,6 +224,7 @@ function DashboardScreen() {
         onGrammarGuideClick={handleGrammarGuide}
         onVideoLessonM3L3Click={handleVideoLessonM3L3}
         onModuleGuidebookClick={handleModuleGuidebook}
+        onVoiceConversationClick={showVoiceConversation}
         showLockedModule={false}
         level={level}
       />

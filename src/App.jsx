@@ -74,6 +74,7 @@ const TravelSuccessScreen = lazy(() => import('./screens/TravelSuccessScreen.jsx
 const GrammarGuidebookScreen = lazy(() => import('./screens/GrammarGuidebookScreen.jsx'))
 const ModuleGuidebookScreen = lazy(() => import('./screens/ModuleGuidebookScreen.jsx'))
 const VideoLessonScreen = lazy(() => import('./screens/VideoLessonScreen.jsx'))
+const VoiceConversationScreen = lazy(() => import('./screens/VoiceConversationScreen.jsx'))
 const LevelSelectionScreen = lazy(() => import('./screens/LevelSelectionScreen.jsx'))
 
 
@@ -378,6 +379,8 @@ function AppLayout() {
         return <ModuleGuidebookScreen guidebookId={activeGuidebookId} />
       case SCREENS.VIDEO_LESSON_M3L3:
         return <VideoLessonScreen />
+      case SCREENS.VOICE_CONVERSATION:
+        return <VoiceConversationScreen />
       case SCREENS.LEVEL_SELECTION:
         return <LevelSelectionScreen />
       case SCREENS.DASHBOARD:

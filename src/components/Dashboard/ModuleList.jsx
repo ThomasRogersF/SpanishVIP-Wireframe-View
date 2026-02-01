@@ -45,6 +45,7 @@ function ModuleList({
   onGrammarGuideClick,
   onVideoLessonM3L3Click,
   onModuleGuidebookClick,
+  onVoiceConversationClick,
   showLockedModule = true,
   level = 'A0'
 }) {
@@ -502,6 +503,13 @@ function ModuleList({
       subtitle: 'Ready • 15 min',
       status: 'ready',
       onClick: onVideoLessonM3L3Click
+    },
+    {
+      id: 4,
+      title: 'L4: Voice Practice',
+      subtitle: 'Ready • 15 min',
+      status: 'ready',
+      onClick: onVoiceConversationClick
     }
   ]
 
