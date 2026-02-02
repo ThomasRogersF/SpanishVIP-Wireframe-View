@@ -47,6 +47,8 @@ export const SCREENS = {
   TRAVEL_LESSON_2_INTRO: 'travelLesson2Intro',
   // Module 3, Lesson 3
   VIDEO_LESSON_M3L3: 'videoLessonM3L3',
+  // Module 4, Lesson 1 - Voice Lesson
+  VOICE_LESSON_M4L1: 'voiceLessonM4L1',
   // Level Selection
   LEVEL_SELECTION: 'levelSelection',
 };
@@ -93,6 +95,7 @@ const FULL_SCREEN_SCREENS = [
   SCREENS.MODULE_GUIDEBOOK,
   SCREENS.TRAVEL_LESSON_2_INTRO,
   SCREENS.VIDEO_LESSON_M3L3,
+  SCREENS.VOICE_LESSON_M4L1,
   SCREENS.LEVEL_SELECTION,
 ];
 
@@ -488,6 +491,11 @@ export function NavigationProvider({ children }) {
     navigateTo(SCREENS.VIDEO_LESSON_M3L3);
   }, [navigateTo]);
 
+  // Module 4, Lesson 1 navigation - Voice Lesson
+  const showVoiceLessonM4L1 = useCallback(() => {
+    navigateTo(SCREENS.VOICE_LESSON_M4L1);
+  }, [navigateTo]);
+
   /**
    * Navigate to Level Selection screen
    */
@@ -634,6 +642,7 @@ export function NavigationProvider({ children }) {
     showModuleGuidebook,
     showTravelLesson2Intro,
     showVideoLessonM3L3,
+    showVoiceLessonM4L1,
 
     // Level Selection
     level,
@@ -705,6 +714,7 @@ export function NavigationProvider({ children }) {
     showModuleGuidebook,
     showTravelLesson2Intro,
     showVideoLessonM3L3,
+    showVoiceLessonM4L1,
     setActiveTab,
     goBack,
     isFullScreen,

@@ -4,6 +4,57 @@
  */
 
 const mockUserData = {
+  // Curriculum data - modules and lessons
+  curriculum: {
+    modules: [
+      {
+        id: 1,
+        title: 'Getting Started',
+        titleSpanish: 'Empezando',
+        level: 'A0',
+        lessons: [
+          { id: 1, title: 'Greetings', completed: true, locked: false },
+          { id: 2, title: 'Introductions', completed: true, locked: false },
+          { id: 3, title: 'Numbers', completed: false, locked: false }
+        ]
+      },
+      {
+        id: 2,
+        title: 'Ser vs Estar',
+        titleSpanish: 'Ser vs Estar',
+        level: 'A1',
+        lessons: [
+          { id: 1, title: 'Concept', completed: true, locked: false },
+          { id: 2, title: 'Logic Check', completed: false, locked: false },
+          { id: 3, title: 'Speaking Practice', completed: false, locked: false }
+        ]
+      },
+      {
+        id: 3,
+        title: 'Travel',
+        titleSpanish: 'Viajar',
+        level: 'A2',
+        lessons: [
+          { id: 1, title: 'Travel Vocabulary', completed: false, locked: false },
+          { id: 2, title: 'At the Airport', completed: false, locked: true },
+          { id: 3, title: 'Video Lesson', completed: false, locked: true }
+        ]
+      },
+      {
+        id: 4,
+        title: 'Conversations',
+        titleSpanish: 'Conversaciones',
+        level: 'A2-B1',
+        lessons: [
+          { id: 1, title: 'The Taxi Ride', type: 'voice', completed: false, locked: false },
+          { id: 2, title: 'At the Restaurant', type: 'voice', completed: false, locked: true },
+          { id: 3, title: 'Shopping', type: 'voice', completed: false, locked: true }
+        ]
+      }
+    ]
+  },
+
+  // User profile data for ProfileHeader component
   // User profile data for ProfileHeader component
   userProfile: {
     name: 'Sofia Learner',

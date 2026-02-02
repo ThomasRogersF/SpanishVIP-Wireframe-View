@@ -40,6 +40,7 @@ function DashboardScreen() {
     showGrammarGuide,
     showModuleGuidebook,
     showVideoLessonM3L3,
+    showVoiceLessonM4L1,
     setActiveTab,
     level,
     showLevelSelection
@@ -151,6 +152,13 @@ function DashboardScreen() {
     showVideoLessonM3L3()
   }
 
+  /**
+   * Navigate to Voice Lesson - The Taxi Ride (Module 4, L1)
+   */
+  const handleVoiceLessonM4L1 = () => {
+    showVoiceLessonM4L1()
+  }
+
   return (
     <Box
       sx={{
@@ -222,6 +230,7 @@ function DashboardScreen() {
         onTravelLessonClick={handleTravelLesson}
         onGrammarGuideClick={handleGrammarGuide}
         onVideoLessonM3L3Click={handleVideoLessonM3L3}
+        onVoiceLessonM4L1Click={handleVoiceLessonM4L1}
         onModuleGuidebookClick={handleModuleGuidebook}
         showLockedModule={false}
         level={level}

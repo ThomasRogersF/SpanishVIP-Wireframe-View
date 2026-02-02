@@ -35,6 +35,7 @@ const glowAnimation = keyframes`
  * - onSerEstarClick: Handler for Ser vs Estar lesson (Module 2, L3)
  * - onTravelLessonClick: Handler for Travel Lesson - Vamos a Viajar (Module 3, L1)
  * - onVideoLessonM3L3Click: Handler for Video Lesson - El Participio (Module 3, L3)
+ * - onVoiceLessonM4L1Click: Handler for Voice Lesson - The Taxi Ride (Module 4, L1)
  * - showLockedModule: Boolean to conditionally render locked Module 3 (default true)
  */
 function ModuleList({
@@ -44,6 +45,7 @@ function ModuleList({
   onTravelLessonClick,
   onGrammarGuideClick,
   onVideoLessonM3L3Click,
+  onVoiceLessonM4L1Click,
   onModuleGuidebookClick,
   showLockedModule = true,
   level = 'A0'
@@ -82,6 +84,7 @@ function ModuleList({
   const [module1Expanded, setModule1Expanded] = useState(false)
   const [module2Expanded, setModule2Expanded] = useState(false)
   const [module3Expanded, setModule3Expanded] = useState(false)
+  const [module4Expanded, setModule4Expanded] = useState(false)
 
   // Module 1 lessons data - matches original HTML: "Module 1: Greetings & Basics" (7 Lessons)
   const module1Lessons = [
@@ -505,6 +508,29 @@ function ModuleList({
     }
   ]
 
+  // Module 4 lessons data - Conversations (Voice Lessons)
+  const module4Lessons = [
+    {
+      id: 1,
+      title: 'L1: The Taxi Ride 🎤',
+      subtitle: 'Voice Lesson with Jorge • 10-15 min',
+      status: 'ready',
+      onClick: onVoiceLessonM4L1Click
+    },
+    {
+      id: 2,
+      title: 'L2: At the Restaurant 🎤',
+      subtitle: 'Voice Lesson • Locked',
+      status: 'locked'
+    },
+    {
+      id: 3,
+      title: 'L3: Shopping 🎤',
+      subtitle: 'Voice Lesson • Locked',
+      status: 'locked'
+    }
+  ]
+
   // Render active Module 3 component
   const renderActiveModule3 = () => (
     <Box sx={{ mb: 3 }}>
@@ -744,6 +770,79 @@ function ModuleList({
 
       {/* Module 3 - Travel Essentials - Conditionally rendered */}
       {showLockedModule ? renderLockedModule3() : renderActiveModule3()}
+
+      {/* Module 4 - Conversations (Voice Lessons) */}
+      <Box sx={{ mb: 3 }}>
+        <Box
+          component="button"
+          onClick={() => setModule4Expanded(!module4Expanded)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            width: '100%',
+            mb: 1.5,
+            textAlign: 'left',
+            border: 'none',
+            backgroundColor: 'transparent',
+            cursor: 'pointer',
+            p: 0,
+            ...iosButtonStyle
+          }}
+        >
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: '8px',
+              backgroundColor: '#F59E0B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Box
+              component="svg"
+              sx={{
+                width: 20,
+                height: 20,
+                color: '#FFFFFF',
+                transform: module4Expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </Box>
+          </Box>
+          <Box>
+            <Typography sx={{ fontWeight: 600, fontSize: '1rem', color: '#111827' }}>
+              Module 4: Conversations 🎤
+            </Typography>
+            <Typography sx={{ fontSize: '0.75rem', color: '#F59E0B', fontWeight: 500 }}>
+              Voice Lessons • A2-B1
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Lessons List */}
+        {module4Expanded && (
+          <Box
+            sx={{
+              ml: 2,
+              pl: 3,
+              borderLeft: '2px solid #E5E7EB'
+            }}
+          >
+            <List sx={{ py: 0 }}>
+              {module4Lessons.map(lesson => renderLessonItem(lesson, false))}
+            </List>
+          </Box>
+        )}
+      </Box>
 
       {/* Coming Soon Modules - Only show for A0 */}
       <Box sx={{ mt: 3 }}>
