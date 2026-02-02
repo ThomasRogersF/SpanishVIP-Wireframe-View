@@ -76,6 +76,7 @@ const ModuleGuidebookScreen = lazy(() => import('./screens/ModuleGuidebookScreen
 const VideoLessonScreen = lazy(() => import('./screens/VideoLessonScreen.jsx'))
 const VoiceConversationScreen = lazy(() => import('./screens/VoiceConversationScreen.jsx'))
 const LevelSelectionScreen = lazy(() => import('./screens/LevelSelectionScreen.jsx'))
+const AchievementsScreen = lazy(() => import('./screens/AchievementsScreen.jsx'))
 
 
 function ProfileScreen() {
@@ -84,8 +85,10 @@ function ProfileScreen() {
   const [statistics, setStatistics] = useState(mockUserData.statistics)
   const [achievements, setAchievements] = useState(mockUserData.achievements)
 
+  const { showAchievementsScreen } = useNavigation()
+
   const handleViewAllAchievements = () => {
-    console.log('View all achievements clicked')
+    showAchievementsScreen()
   }
 
   return (
@@ -383,6 +386,8 @@ function AppLayout() {
         return <VoiceConversationScreen />
       case SCREENS.LEVEL_SELECTION:
         return <LevelSelectionScreen />
+      case SCREENS.ACHIEVEMENTS:
+        return <AchievementsScreen />
       case SCREENS.DASHBOARD:
       default:
         // Handle tab-based navigation for dashboard

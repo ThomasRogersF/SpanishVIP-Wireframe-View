@@ -51,6 +51,8 @@ export const SCREENS = {
   VOICE_CONVERSATION: 'voiceConversation',
   // Level Selection
   LEVEL_SELECTION: 'levelSelection',
+  // Achievements
+  ACHIEVEMENTS: 'achievements',
 };
 
 // Screens that should hide StatusBar and BottomNav
@@ -504,6 +506,13 @@ export function NavigationProvider({ children }) {
   }, [navigateTo]);
 
   /**
+   * Navigate to Achievements screen
+   */
+  const showAchievementsScreen = useCallback(() => {
+    navigateTo(SCREENS.ACHIEVEMENTS, false);
+  }, [navigateTo]);
+
+  /**
    * Handle bottom nav tab changes
    * @param {string} tabValue - Tab value to switch to
    */
@@ -649,6 +658,9 @@ export function NavigationProvider({ children }) {
     setLevel,
     showLevelSelection,
 
+    // Achievements
+    showAchievementsScreen,
+
     // Tab and history navigation
     setActiveTab,
     goBack,
@@ -725,6 +737,8 @@ export function NavigationProvider({ children }) {
     level,
     setLevel,
     showLevelSelection,
+    // Achievements
+    showAchievementsScreen,
   ]);
 
   return (
